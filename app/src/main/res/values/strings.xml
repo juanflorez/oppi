@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Oppi</string>
+    <string name="suggestion">Here we can have list of contents (grid). Use for example ListFragment. </string>
+    <string name="action_settings">Settings</string>
+</resources>
