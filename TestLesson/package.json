@@ -1,0 +1,22 @@
+{
+
+“PackageData”:
+    {
+     “PackageID”: 20150321,
+     “Name”:“Test Lesson”, 
+     “PackageVersion”: 1 ,
+     “EngineVersion” : 1,
+     “MinimumResolution” : “ldpi”,
+            “MaximumResolution” : “xxxhdpi”
+    },
+
+“Desktop”:
+    {
+     “SmallIcon”  : “icons/small.png”,
+     “MediumIcon” : “icons/mdium.png”,
+     “BigIcon”    : “icons/big.png”,
+     “Duration”   : “00:00:31”
+     }
+
+
+}
