@@ -1,0 +1,46 @@
+
+{“properties”:[
+  {“hight”:”120”,”width”:”160”}
+ ]},
+
+{ “screens”:[
+
+    {“name” : “screen_0”,  “duration”:”00:00:01”}, 
+    {“name” : “screen_1”,  “duration”:”00:00:01”}, 
+    {“name” : “screen_2”,  “duration”:”00:00:01”}, 
+    {“name” : “long_3”,   “duration”:”00:00:06”},
+    {“name” : ”screen_10”, ”duration”:”00:00:01”}
+
+  ]},
+
+
+
+{   “screen_0”:[
+     { “image”:”resources/zero.png”, “pos_x” : “60”, “pos_y” : “40”}
+
+
+    },
+
+
+{   “screen_1”:[
+     { “image”:”resources/one.png”, “pos_x” : “60”, “pos_y” : “40”}
+
+
+    },
+
+
+{   “long_3”:[
+     { “image”:”resources/three.png”, “pos_x” : “60”, “pos_y” : “40”}
+
+
+    },
+
+{   “screen_10”:[
+     { “image”:”resources/one.png”,  “pos_x” : “20”, “pos_y” : “40”},
+     { “image”:”resources/zero.png”, “pos_x” : “80”, “pos_y” : “40”},
+
+
+    }
+
+
+
