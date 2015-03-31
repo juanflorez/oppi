@@ -1,0 +1,50 @@
+
+{“properties”: {
+     “background”:”resources/background2.jpg”,
+     ”startTime”:”00:00:16”,
+     “screenWidth” : “480”,
+     “screenHight” : “100” 
+  },
+
+ “frame_6”: {
+      “duration” : “00:00:01”,  
+      “images”: [
+        {“file”:”resources/six.png”, “pos_x” : “60”, “pos_y” : “40”}
+       ]
+   },
+
+  “frame_7”: {
+      “duration” : “00:00:01”,  
+      “images”: [
+        {“file”:”resources/seven.png”, “pos_x” : “60”, “pos_y” : “40”}
+       ]
+   },
+
+  “frame_8”: {
+      “duration” : “00:00:01”,  
+      “images”: [
+        {“file”:”resources/eight.png”, “pos_x” : “60”, “pos_y” : “40”}
+       ]
+   },
+    
+  “frame_9”: {
+      “duration” : “00:00:01”,  
+      “images”: [
+        {“file”:”resources/nine.png”, “pos_x” : “60”, “pos_y” : “40”}
+       ]
+   },
+
+  “frame_10”: {
+      “duration” : “00:00:01”,  
+      “images”: [
+        {“file”:”resources/one.png”, “pos_x” : “20”, “pos_y” : “40”}
+        {“file”:”resources/zero.png”, “pos_x” : “80”, “pos_y” : “40”}
+       ]
+   }
+
+ 
+}
+
+
+
+

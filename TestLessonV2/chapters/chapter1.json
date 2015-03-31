@@ -1,0 +1,10 @@
+{
+ "SoundFile:"resources/numbers.mp3",
+
+ “Scenes”:[
+    {“SceneFile”:“First.json”, “StartTime”:”00:00:00”}, 
+    {“SceneFile”:”Second.json”,”StartTime”:”00:00:14”},
+    {“SceneFile”:”Third.json”, “StartTime”:”00:00:34”}
+  ]
+
+}
