@@ -37,7 +37,7 @@
   "frame_10": {
       "duration" : "00:00:01",  
       "images": [
-        {"file":"resources/one.png", "pos_x" : "20", "pos_y" : "40"}
+        {"file":"resources/one.png", "pos_x" : "20", "pos_y" : "40"},
         {"file":"resources/zero.png", "pos_x" : "80", "pos_y" : "40"}
        ]
    }
