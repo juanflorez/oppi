@@ -1,22 +1,16 @@
 {
-
-"PackageData":
-    {
-     "PackageID": 20150321,
-     "Name":"Test Lesson V2", 
-     "PackageVersion": 1 ,
-     "EngineVersion" : 1,
-     "MinimumResolution" : "ldpi",
-     "MaximumResolution" : "xxxhdpi"
+    "PackageData": {
+        "PackageID": 20150321,
+        "Name": "Test Lesson V2",
+        "PackageVersion": 1,
+        "EngineVersion": 1,
+        "MinimumResolution": "ldpi",
+        "MaximumResolution": "xxxhdpi"
     },
-
-"Desktop":
-    {
-     "SmallIcon"  : "icons/small.png",
-     "MediumIcon" : "icons/mdium.png",
-     "BigIcon"    : "icons/big.png",
-     "Duration"   : "00:00:37"
-     }
-
-
+    "Desktop": {
+        "SmallIcon": "icons_small.png",
+        "MediumIcon": "icons_mdium.png",
+        "BigIcon": "icons_big.png",
+        "Duration": "00:00:37"
+    }
 }
