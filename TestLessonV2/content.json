@@ -7,7 +7,7 @@
      “PackageVersion”: 1 ,
      “EngineVersion” : 1,
      “MinimumResolution” : “ldpi”,
-            “MaximumResolution” : “xxxhdpi”
+     “MaximumResolution” : “xxxhdpi”
     },
 
 “Desktop”:
