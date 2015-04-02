@@ -1,10 +1,5 @@
 
-{"properties": {
-     "background":"resources/background1.jpg",
-     "screenWidth" : "480",
-     "screenHight" : "100" 
-  },
-
+{
  "frame_1": {
       "duration" : "00:00:01",  
       "images": [
@@ -42,7 +37,5 @@
 
  
 }
-
-
 
 
