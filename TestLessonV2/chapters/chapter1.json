@@ -2,6 +2,7 @@
  "SoundFile":"resources/numbers.mp3",
 
  "Scenes":[
+<<<<<<< HEAD
     {"SceneFile":"first.json",
      "StartTime":"00:00:00",
      "background":"resources/background1.jpg",
@@ -21,3 +22,11 @@
      "screenHight" : "100" }
      ]
 }
+=======
+    {"SceneFile":"First.json", "StartTime":"00:00:00"}, 
+    {"SceneFile":"Second.json","StartTime":"00:00:14"},
+    {"SceneFile":"Third.json", "StartTime":"00:00:34"}
+  ]
+
+}
+>>>>>>> parent of e030ef7... deleted invisible chars, changed the upper caps, and validated the format at http://jsonviewer.stack.hu
