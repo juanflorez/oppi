@@ -19,6 +19,8 @@ import com.sofia.oppi.animationengine.JSONPackageParser;
 import com.sofia.oppi.animationengine.PackageItem;
 import com.sofia.oppi.animationengine.Scene;
 import com.sofia.oppi.content.*;
+import com.sofia.oppi.install.Installer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -84,8 +86,14 @@ public class MainActivity extends ActionBarActivity {
                 jsonPackageReader = new JsonReader( new InputStreamReader( jsonPackageStream, "UTF-8" ) );
                 if( resourcesToRead[i] == R.raw.content ) {
                     contentPackage = mContentParser.parsePackage( jsonPackageReader );
+                    // add the module to the database
+                    Installer installer = Installer.getInstance(this);
+                    installer.installPackage(contentPackage);
+
                 }else if( resourcesToRead[i] == R.raw.chapter1 ){
                     chapter = mContentParser.parseChapter( jsonPackageReader );
+
+
                 }else{
                     // this is frame!
                     ArrayList<PackageItem> frames = mContentParser.parseFrameInfo( jsonPackageReader );

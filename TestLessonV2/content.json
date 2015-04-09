@@ -7,10 +7,15 @@
         "MinimumResolution": "ldpi",
         "MaximumResolution": "xxxhdpi"
     },
+
     "Desktop": {
         "SmallIcon": "icons/small.png",
         "MediumIcon": "icons/medium.png",
         "BigIcon": "icons/big.png",
         "Duration": "00:00:37"
     }
+
+     "Chapters" : [
+           {"FileName" : "chapter1.json"}
+      ]
 }

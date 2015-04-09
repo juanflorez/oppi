@@ -14,6 +14,7 @@ import java.util.ArrayList;
  *
  * Gets content specification as JSON and parses it and returns required PackageItem
  * TODO: different versions of parser also?
+ * TODO: JSONObject may help here?
  */
 
 public class JSONPackageParser {
@@ -26,6 +27,7 @@ public class JSONPackageParser {
      */
     public ContentPackage parsePackage( JsonReader reader ) {
         ContentPackage contentpackage=null;
+
         reader.setLenient( true );
         try{
             reader.beginObject();
@@ -36,9 +38,12 @@ public class JSONPackageParser {
                     // read package data
                     contentpackage = readPackageInfo( reader );
 
-                }else if( elementName.equalsIgnoreCase( "desktop") ){
+                }else if( elementName.equalsIgnoreCase( "desktop") ) {
                     // TODO: should this information added to package
                     reader.skipValue();
+                }else if( elementName.equalsIgnoreCase( "chapters")){
+                     // hold that array in the chaptersArray by now.
+                     makeChapterArray( reader );
                 }else{
                     // TODO: throw exception, not valid packageJson
                     reader.skipValue();
@@ -52,6 +57,28 @@ public class JSONPackageParser {
         }
 
         return contentpackage;
+    }
+
+    //TODO: Decide where to store the list of chapters.
+/**
+ * The content will be divided in chapters.
+ * A chapter is linked to 1 media file, and can have one or
+ * multiple scenes. the chapter array will tell the engine which chapters to play in which order.
+ * */
+    private void makeChapterArray(JsonReader reader) throws IOException {
+
+        String fileName="";
+        ArrayList<String> chapterFiles=null;
+
+        while (reader.hasNext() ){
+            String elementName = reader.nextName();
+            if( elementName.equalsIgnoreCase("fileName") ){
+                fileName = reader.nextString();
+                chapterFiles.add(fileName);
+                Log.v(TAG, "Adding " + fileName);
+            }
+        }
+
     }
 
     /**
@@ -89,6 +116,8 @@ public class JSONPackageParser {
                 reader.skipValue();
             }
         }
+        //TODO: I am not sure if all of the fields are mandatory
+
         if( name.length() != 0 && id.length() != 0 && packversion.length() != 0 && engversion.length() != 0
                 && minres.length() != 0 && maxres.length() != 0 ){
             pack = new ContentPackage( name, Long.parseLong(id), packversion,engversion,minres,maxres );
