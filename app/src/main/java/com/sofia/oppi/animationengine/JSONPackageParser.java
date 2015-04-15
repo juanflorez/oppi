@@ -3,10 +3,6 @@ package com.sofia.oppi.animationengine;
 import android.util.JsonReader;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -41,6 +37,8 @@ public class JSONPackageParser {
                 }else if( elementName.equalsIgnoreCase( "desktop") ) {
                     // TODO: should this information added to package
                     reader.skipValue();
+                    // TODO: get the duration and other information
+                    contentpackage.setDuration( "00:00:37");
                 }else if( elementName.equalsIgnoreCase( "chapters")){
                      // hold that array in the chaptersArray by now.
                      makeChapterArray( reader );
@@ -138,7 +136,7 @@ public class JSONPackageParser {
     public Chapter parseChapter( JsonReader reader )  {
         Chapter chapter= new Chapter();
         String audioName="";
-        ArrayList<Scene> sceneArray=null;
+        ArrayList<ContentScene> sceneScreenArray =null;
         reader.setLenient( true );
         try{
             reader.beginObject();
@@ -147,6 +145,7 @@ public class JSONPackageParser {
                 if( elementName.equalsIgnoreCase( "soundfile" ) ){
                     // read package data
                     audioName = reader.nextString();
+                    chapter.setAudioName( audioName );
 
                 }else if( elementName.equalsIgnoreCase( "scenes") ){
                     reader.beginArray();
@@ -206,8 +205,8 @@ public class JSONPackageParser {
             }
             if( sceneFile.length() != 0 && startTime.length() != 0 && background.length() != 0 &&
                     screenheight.length() != 0 && screenwidth.length() != 0 ){
-                Scene newScene = new Scene( sceneFile, startTime, background, screenheight, screenwidth );
-                chapter.add( newScene );
+                ContentScene newSceneScreen = new ContentScene( sceneFile, startTime, background, screenheight, screenwidth );
+                chapter.add( newSceneScreen) ;
             }
         }
     }
@@ -217,8 +216,8 @@ public class JSONPackageParser {
      * @param reader
      * @return
      */
-    public ArrayList<PackageItem> parseFrameInfo( JsonReader reader ) {
-        ArrayList<PackageItem> frames=new ArrayList<PackageItem>();
+    public ArrayList<Frame> parseFrameInfo( JsonReader reader ) {
+        ArrayList<Frame> frames=new ArrayList<Frame>();
 
         reader.setLenient( true );
         try{
@@ -246,7 +245,7 @@ public class JSONPackageParser {
      */
     private Frame parseFrame(JsonReader reader) throws IOException{
         String duration="";
-        ArrayList<ImageItem> items=null;
+        ArrayList<FrameImage> items=null;
         Frame frame=null;
 
         while( reader.hasNext() ){
@@ -257,10 +256,10 @@ public class JSONPackageParser {
 
             }else if( elementName.startsWith( "images") ){
                 reader.beginArray();
-                items=new ArrayList<ImageItem>();
+                items=new ArrayList<FrameImage>();
                 while( reader.hasNext() ){
                     reader.beginObject();
-                    ImageItem image=parseImageItem( reader );
+                    FrameImage image=parseImageItem( reader );
                     items.add( image );
                     reader.endObject();
                 }
@@ -281,8 +280,8 @@ public class JSONPackageParser {
      * @param reader
      * @return
      */
-    private ImageItem parseImageItem( JsonReader reader ) throws IOException{
-        ImageItem image=null;
+    private FrameImage parseImageItem( JsonReader reader ) throws IOException{
+        FrameImage image=null;
         String fileName="";
         String posX="";
         String posY="";
@@ -300,7 +299,7 @@ public class JSONPackageParser {
                 reader.skipValue();
             }
             if( fileName.length() != 0 && posX.length() != 0 && posY.length() != 0 ){
-                image = new ImageItem( fileName, Integer.parseInt(posX), Integer.parseInt(posY) );
+                image = new FrameImage( fileName, Integer.parseInt(posX), Integer.parseInt(posY) );
             }
         }
         return image;

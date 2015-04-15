@@ -4,16 +4,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static java.lang.Integer.*;
+
 /**
  * Class that represents the content
  *
  */
 public class ContentPackage {
 
-
-    //private PagerSection mLearnSection=null;
-    //private TrySection mTrySection=null;
-    ArrayList<PackageItem> mPackageItems =null;
     ArrayList<Chapter> mChapters = null;
     private String mName="";
     private Long mPackageID;
@@ -24,20 +22,21 @@ public class ContentPackage {
     private String mSmallIcon="";
     private String mMediumIcon="";
     private String mBigIcon="";
-    private String mDuration="";
+    private int mDuration=0;
 
     /*Empty holder*/
     public ContentPackage () {
 
     }
 //TODO the desktop component should also be added here
-    public ContentPackage(String name, Long id, String packVersion, String engVersion, String minRes, String maxRes){
+    public ContentPackage(String name, Long id, String packVersion, String engVersion, String minRes, String maxRes ){
         mName=name;
         mPackageID=id;
         mEngineVersion=engVersion;
         mPackageVersion=packVersion;
         mMinResolution=minRes;
         mMaxResolution=maxRes;
+        mChapters = new ArrayList<Chapter>();
     }
 
     public String getName() {
@@ -76,7 +75,24 @@ public class ContentPackage {
         return mBigIcon;
     }
 
-    public String getDuration() {
+    public void setDuration( String duration ){
+        // TODO: PARSE THIS FOR EXAMPLE "00:00:14" NOW TAKES ONLY SECONDS...USE REGEx?
+        String seconds = duration.substring( (duration.lastIndexOf( ":") + 1));
+        mDuration= parseInt(seconds);
+    }
+    public int getDuration() {
         return mDuration;
+    }
+
+    public void addChapter( Chapter chapter ){
+        mChapters.add( chapter );
+    }
+
+    public Chapter getChapter( int ind ){
+        Chapter chapter=null;
+        if( mChapters!= null && ind < mChapters.size()){
+            chapter = mChapters.get( ind );
+        }
+        return chapter;
     }
 }

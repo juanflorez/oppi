@@ -8,11 +8,9 @@ import android.util.Log;
 /**
  * This class represents a single animated item in the frame
  *
- * Item to be animated by Android.ObjectAnimator. Must have setters for the properties that are animated.
- * MUST have also bitmap, which is drawn on the surface.
  *
  */
-public class AnimationItem implements PackageItem {
+public class AnimationItem{
     String mName="";
     String mBitmapName="";
     int mPositionX = 0;
@@ -72,16 +70,6 @@ public class AnimationItem implements PackageItem {
         return bitmap;
     }
 
-    @Override
-    public void add(PackageItem item) {
-
-    }
-
-    @Override
-    public void remove(PackageItem item) {
-
-    }
-
     public void setBitmap( Bitmap bitmap ) {
         this.bitmap = bitmap;
         this.mHeight = this.bitmap.getHeight();
@@ -95,11 +83,6 @@ public class AnimationItem implements PackageItem {
     }
     public String getName() {
         return mName;
-    }
-
-    @Override
-    public void setHeight(int height) {
-
     }
 
     public void setName( String name ) {
@@ -125,11 +108,6 @@ public class AnimationItem implements PackageItem {
     }
     public void setDuration(int duration) {
         this.mDuration = duration;
-    }
-
-    @Override
-    public PackageItem getItem(int id) {
-        return null;
     }
 
     public int getBackgroundColor() {

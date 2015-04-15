@@ -6,4 +6,11 @@
     <TextView android:text="Welcome to OPPI!" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="START"
+        android:id="@+id/testButton"
+        android:layout_gravity="center" />
+
 </FrameLayout>

@@ -5,16 +5,17 @@ import android.graphics.Bitmap;
 /**
  *
  */
-public class ImageItem {
+public class FrameImage {
     private int mYPos=0;
     private int mXPos=0;
     private String mBitmapName="";
     private Bitmap mBitmap=null;
 
-    public ImageItem( String bitmapName, int positionX, int positionY ){
+    public FrameImage(String bitmapName, int positionX, int positionY){
         mYPos = positionY;
         mXPos = positionX;
-        mBitmapName = bitmapName;
+        // TODO: now containes resources/ get just the resource name, LATER....HOW?
+        mBitmapName = bitmapName.substring( (bitmapName.lastIndexOf( "/") + 1), bitmapName.lastIndexOf(".") );
     }
 
     public void setYPos( int YPos ) {
