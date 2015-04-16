@@ -2,6 +2,8 @@ package com.sofia.oppi.animationengine;
 
 import java.util.ArrayList;
 
+import static java.lang.Integer.parseInt;
+
 /**
  * Created by riikka on 02/04/15.
  *
@@ -21,9 +23,9 @@ public class ContentScene extends Scene {
     public ContentScene(String jsonFile, String startTime, String background, String height, String width ) {
         super();
         mJsonFile = jsonFile;
-        // TODO: PARSE THIS FOR EXAMPLE "00:00:14" NOW TAKES ONLY SECONDS...USE REGEx?
-        String seconds = startTime.substring( (startTime.lastIndexOf( ":") + 1));
-        mSceneAudioMarkTime = Integer.parseInt( seconds );
+        String[] times = startTime.split( ":", 3);
+        mSceneAudioMarkTime= parseInt(times[2]) + parseInt(times[1])*60 + parseInt(times[0])*3600;
+
         // TODO; now contains path /resources/nama.png, get JUST the name. CHANGE THIS....LATER
         mBackground = background.substring( (background.lastIndexOf( "/") + 1), background.lastIndexOf(".") );
         mScreenHeight = Integer.parseInt( height );

@@ -76,9 +76,8 @@ public class ContentPackage {
     }
 
     public void setDuration( String duration ){
-        // TODO: PARSE THIS FOR EXAMPLE "00:00:14" NOW TAKES ONLY SECONDS...USE REGEx?
-        String seconds = duration.substring( (duration.lastIndexOf( ":") + 1));
-        mDuration= parseInt(seconds);
+        String[] times = duration.split( ":", 3);
+        mDuration= parseInt(times[2]) + parseInt(times[1])*60 + parseInt(times[0])*3600;
     }
     public int getDuration() {
         return mDuration;
