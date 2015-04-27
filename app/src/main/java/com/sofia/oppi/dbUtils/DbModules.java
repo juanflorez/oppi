@@ -14,13 +14,16 @@ public class DbModules {
     public static final String TEXT_TYPE = " TEXT";
     public static final String INTEGER_TYPE = " INTEGER";
     public static final String COMMA     = " , ";
-    public static final String CREATE_TABLE;
-    public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " +
+    public static final String CREATE_MODULES_TABLE;
+    public static final String DELETE_MODULES_TABLE = "DROP TABLE IF EXISTS " +
                                                  InstModule.TABLE_NAME;
+    public static final String CREATE_DOWNLOADS_TABLE;
+    public static final String DELETE_DOWNLOADS_TABLE = "DROP TABLE IF EXISTS " +
+                                                 OnGoingDownloads.TABLE_NAME;
 
     static {
-        CREATE_TABLE = "" +
-                "CREATE TABLE " + InstModule.TABLE_NAME + " ( " +
+        CREATE_MODULES_TABLE = "" +
+                "CREATE TABLE IF NOT EXISTS " + InstModule.TABLE_NAME + " ( " +
                 InstModule._ID + " INTEGER PRIMARY KEY, " +
                 InstModule.MODULE_ROOT + TEXT_TYPE + COMMA +
                 InstModule.MODULE_ID + TEXT_TYPE + COMMA +
@@ -37,15 +40,37 @@ public class DbModules {
                 " ) ";
     }
 
+    static {
+        CREATE_DOWNLOADS_TABLE = ""+
+                "CREATE TABLE IF NOT EXISTS " + OnGoingDownloads.TABLE_NAME + " ( " +
+                OnGoingDownloads._ID + " INTEGER PRIMARY KEY" + COMMA+
+                OnGoingDownloads.QUEUE_ID + INTEGER_TYPE + COMMA +
+                OnGoingDownloads.LINK + TEXT_TYPE + COMMA +
+                OnGoingDownloads.START_TIME + INTEGER_TYPE +
+
+               " ) ";
+    }
+
 
     /**
      * Empty constructor
     **/
     public DbModules() {}
 
-    /*Inner classes for each table*/
+    /*Inner classes for onGoingDownloads*/
 
-    public static abstract class InstModule implements BaseColumns {
+    public static abstract class OnGoingDownloads implements BaseColumns {
+
+        public static final String TABLE_NAME    = "downloads";
+        public static final String QUEUE_ID      = "queue_ID"; // Download_ID in Download Manager
+        public static final String LINK           = "link";      //Url where the download comes from
+        public static final String START_TIME     = "start_time";
+
+    }
+
+       /*Inner classes for downloaded and expanded modules*/
+
+    public static abstract class InstModule  implements BaseColumns {
 
         public static final String TABLE_NAME    = "modules";
         public static final String MODULE_ROOT   = "moduleRoot"; // This points to the module path

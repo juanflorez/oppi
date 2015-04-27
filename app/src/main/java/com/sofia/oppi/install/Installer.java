@@ -3,6 +3,7 @@ package com.sofia.oppi.install;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.JsonReader;
 import android.util.Log;
@@ -12,6 +13,8 @@ import com.sofia.oppi.animationengine.JSONPackageParser;
 import com.sofia.oppi.dbUtils.DbModules;
 import com.sofia.oppi.dbUtils.InstalledModulesHelper;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -50,7 +53,7 @@ public class Installer {
 /** Adds a new module to the database
 *   If the module exists in the db, and moduleOk, do nothing
 */
-   public int installPackage (ContentPackage modulePackage ) {
+   public int registerPackage (ContentPackage modulePackage ) {
        SQLiteDatabase db = dbHelper.getWritableDatabase();
        if(!checkForInstallModule(modulePackage)) {
            ContentValues values = new ContentValues();
@@ -110,6 +113,47 @@ public class Installer {
 
     }
 
+/**It assumes that the JSONObject is a valid module from the online repository
+* */
+//TODO write exception for invalid module
+     public boolean registerPackage(JSONObject module) throws JSONException{
 
+         SQLiteDatabase db = dbHelper.getWritableDatabase();
+         ContentValues values = new ContentValues();
+         values.put(DbModules.InstModule._ID, module.getString("packageID"));
+         values.put(DbModules.InstModule.MODULE_NAME, module.getString("Name"));
+         values.put(DbModules.InstModule.MODULE_VERSION, module.getString("packageVersion"));
+         values.put(DbModules.InstModule.ENGINE_VERSION, module.getString("engineVersion"));
+         values.put(DbModules.InstModule.MINIMUM_RES, module.getString("MinimumResolution"));
+         values.put(DbModules.InstModule.MAXIMUM_RES, module.getString("MaximumResolution"));
+         values.put(DbModules.InstModule.SMALL_ICON, module.getString("SmallIcon"));
+         values.put(DbModules.InstModule.MEDIUM_ICON, module.getString("MediumIcon"));
+         values.put(DbModules.InstModule.BIG_ICON, module.getString("BigIcon"));
+         values.put(DbModules.InstModule.DURATION,module.getString("Duration"));
+         values.put(DbModules.InstModule.CORRECT, 1);
+
+
+
+         try {
+             // Insert the new row, returning the primary key value of the new row
+             long newRowId;
+             newRowId = db.insert(
+                     DbModules.InstModule.TABLE_NAME,
+                     null,
+                     values);
+             Log.i("Item added to db", module.getString("Name") + " " + newRowId);
+         }catch(SQLiteConstraintException u){
+             Log.i(TAG, u.getLocalizedMessage());
+
+         }
+             return true;
+    }
+
+    public void deleteDatabase(){
+        SQLiteDatabase db= dbHelper.getWritableDatabase();
+        db.execSQL(DbModules.DELETE_MODULES_TABLE);
+
+
+    }
 }
 

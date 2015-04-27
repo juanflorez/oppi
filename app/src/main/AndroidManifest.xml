@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sofia.oppi" >
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.SEND_DOWNLOAD_COMPLETED_INTENTS" />
 
     <application
+        android:name=".downloader.AppController"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".UI.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".UI.ContentActivity"
-            android:label="SET CONTENT NAME" />
-        <uses-permission android:name="android.permission.INTERNET"/>
+            android:label="@string/content_activity_name"
+            android:screenOrientation="landscape">
+
+        </activity>
+
+        <activity
+            android:name=".store.StoreMainActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/store_app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <receiver android:name=".downloader.BrReceiver" >
+            <intent-filter>
+                <action android:name= "android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+    </receiver>
     </application>
 
 </manifest>
