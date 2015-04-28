@@ -3,35 +3,35 @@
  "frame_1": {
       "duration" : "00:00:01",  
       "images": [
-        {"file":"resources/one.png", "pos_x" : "60", "pos_y" : "40"}
+        {"file":"resources/one.png", "pos_x" : "572", "pos_y" : "225"}
        ]
    },
 
   "frame_2": {
       "duration" : "00:00:01",  
       "images": [
-        {"file":"resources/two.png", "pos_x" : "60", "pos_y" : "40"}
+        {"file":"resources/two.png", "pos_x" : "572", "pos_y" : "225"}
        ]
    },
 
   "frame_3": {
       "duration" : "00:00:01",  
       "images": [
-        {"file":"resources/three.png", "pos_x" : "60", "pos_y" : "40"}
+        {"file":"resources/three.png", "pos_x" : "572", "pos_y" : "225"}
        ]
    },
     
   "frame_4": {
       "duration" : "00:00:01",  
       "images": [
-        {"file":"resources/four.png", "pos_x" : "60", "pos_y" : "40"}
+        {"file":"resources/four.png", "pos_x" : "572", "pos_y" : "225"}
        ]
    },
 
   "frame_5": {
       "duration" : "00:00:01",  
       "images": [
-        {"file":"resources/five.png", "pos_x" : "60", "pos_y" : "40"}
+        {"file":"resources/five.png", "pos_x" : "572", "pos_y" : "225"}
        ]
    }
 

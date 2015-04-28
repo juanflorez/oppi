@@ -10,6 +10,8 @@ import android.view.SurfaceView;
 import android.view.animation.Animation;
 
 import com.sofia.oppi.animationengine.AnimationEngine;
+import com.sofia.oppi.animationengine.OPPIGraphics;
+import com.sofia.oppi.assets.BitmapPool;
 
 /**
  * View for handling surface and rendering to surface in a separate thread. Used for drawing section frames.
@@ -34,13 +36,17 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
         mFramebuffer = framebuffer;
     }
 
+    public void attachFrameBuffer( Bitmap buffer ){
+        mFramebuffer = buffer;
+    }
+
     @Override
     public void run() {
         Log.i( TAG, "animation draw");
 
         while( running ){
 
-            if( !mHolder.getSurface().isValid() || mAnimationEngine == null || mSceneRunning == false )
+            if( !mHolder.getSurface().isValid() || mAnimationEngine == null || mSceneRunning == false || mFramebuffer == null )
                 continue;
             // start editing the pixels in the surface
             Canvas canvas = mHolder.lockCanvas();
@@ -51,10 +57,10 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
                 mAnimationEngine.getCurrentScene().update();
                 // and draw on the framebuffer bitmap
                 mAnimationEngine.getCurrentScene().present();
-
-                // then finally draw the framebuffer
+                // then finally draw the framebuffer with scaling
                 canvas.getClipBounds( rect );
                 canvas.drawBitmap( mFramebuffer, null, rect, null );
+                //canvas.drawBitmap( mFramebuffer, 0, 0, null ); // no scaling
             }
             // finishes the drawing on surface
             mHolder.unlockCanvasAndPost( canvas );
@@ -65,7 +71,9 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
 
     @Override
     public void surfaceCreated( SurfaceHolder holder ) {
-
+        if( mAnimationEngine != null  ){
+            mAnimationEngine.onMeasure( this.getMeasuredHeight(), this.getMeasuredHeight() );
+        }
     }
 
     @Override

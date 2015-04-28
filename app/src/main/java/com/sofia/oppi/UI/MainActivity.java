@@ -28,6 +28,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
+// TODO: support ONLY LANDSCAPE!!!
+
+
 public class MainActivity extends ActionBarActivity {
     final private String TAG="MainActivity";
     JSONPackageParser mContentParser=null;

@@ -1,5 +1,7 @@
 package com.sofia.oppi.animationengine;
 
+import android.graphics.Rect;
+
 import java.util.ArrayList;
 
 import static java.lang.Integer.parseInt;
@@ -13,6 +15,7 @@ public class ContentScene extends Scene {
     private String mBackground="";
     private int mScreenHeight;
     private int mScreenWidth;
+    private Rect mDestRect;
     private ArrayList<Frame> mFrames=null;
     private int mCurrentFrame=0;
     private int mPresentedFrame=1;
@@ -30,6 +33,7 @@ public class ContentScene extends Scene {
         mBackground = background.substring( (background.lastIndexOf( "/") + 1), background.lastIndexOf(".") );
         mScreenHeight = Integer.parseInt( height );
         mScreenWidth = Integer.parseInt( width );
+        mDestRect = new Rect( 0, 0, mScreenWidth, mScreenHeight );
     }
 
     public String getJsonFile() {
@@ -42,6 +46,14 @@ public class ContentScene extends Scene {
 
     public String getBitmapName(){
         return mBackground;
+    }
+
+    public int getSceneHeight(){
+        return mScreenHeight;
+    }
+
+    public int getSceneWidth(){
+        return mScreenWidth;
     }
 
     public void add( ArrayList<Frame> frames ){
@@ -70,12 +82,13 @@ public class ContentScene extends Scene {
             // clear buffer
             mAnimationEngine.getGraphics().clear( 0 );
             // draw first the background
-            mAnimationEngine.getGraphics().drawBitmap( getBitmapName(), 0, 0 );
+
+            mAnimationEngine.getGraphics().drawBackground( getBitmapName() );
             // then draw the images of current frame
             if( images != null ){
                 for( int i=0; i < images.size(); i++ ){
                     FrameImage image = images.get( i );
-                    mAnimationEngine.getGraphics().drawBitmap( image.getBitmapName(), image.getXPos(), image.getYPos() );
+                    mAnimationEngine.getGraphics().drawBitmap( image.getBitmapName(), image.getXPos(), image.getYPos(), mDestRect );
                 }
             }
             mPresentedFrame=mCurrentFrame;

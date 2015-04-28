@@ -2,8 +2,8 @@ package com.sofia.oppi.UI;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +24,7 @@ import com.sofia.oppi.animationengine.SceneObserver;
 import com.sofia.oppi.assets.BitmapPool;
 import com.sofia.oppi.assets.ContentAudioPlayer;
 import com.sofia.oppi.assets.PackagePool;
+import com.sofia.oppi.assets.ScreenAdapter;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 /**
  *
  */
-public class ContentActivity extends Activity implements AnimationEngine, SceneObserver {
+public class ContentActivity extends Activity implements AnimationEngine, SceneObserver, ScreenAdapter {
     private static final String TAG = "CONTENT_ACTIVITY";
     private AnimationSurface mAnimationSurface=null;
     private Long mPackageID;
@@ -50,31 +51,17 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         // NOTE: API level 19 have immersive UI (ie. full screen that enables capturing all touch events)
 
-        if( savedInstanceState == null ){
-            Intent intent = getIntent();
-            mPackageID = intent.getLongExtra("PACKAGE_ID", 0L);
-
-            // TODO: "ScreenAdapter"/bitmap scaling for different devices/screen sizes
-
-            boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-            int frameHeight = isLandscape ? 480 : 320;
-            int frameWidth = isLandscape ? 320 : 480;
-            Bitmap framebuffer = Bitmap.createBitmap( frameHeight, frameWidth, Bitmap.Config.RGB_565 );
-            mAnimationSurface = new AnimationSurface( getApplicationContext(), this, framebuffer );
-
-            mGraphics = new OPPIGraphics( framebuffer, BitmapPool.getInstance() );
-
-            this.prepareContent( mPackageID );
-        }
         // TODO: Should buttons created dynamically? Should user be able to define view layout with json?
         // Now buttons are defined in the layout in resources, which makes easier to define layout for different devices
         // Customize: images to buttons, background color between spaces
         // OR create custom controlPane for this activity OR no buttons at all?
         setContentView( R.layout.activity_content );
 
-        RelativeLayout relativeLayout = (RelativeLayout)findViewById( R.id.contentLayout );
-        FrameLayout contentFrame = (FrameLayout)findViewById( R.id.contentFrame );
-        contentFrame.addView( mAnimationSurface );
+        if( savedInstanceState == null ){
+            Intent intent = getIntent();
+            mPackageID = intent.getLongExtra("PACKAGE_ID", 0L);
+            this.prepareContent( mPackageID );
+        }
 
         Button back = (Button)findViewById( R.id.backButton );
         back.setOnClickListener( new View.OnClickListener() {
@@ -106,7 +93,6 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      * @param packageID the packageId, which is shown to the user
      */
     public void prepareContent( long packageID ){
-
         ContentPackage currentPackage = PackagePool.getInstance().getContent( packageID );
         // TODO: later chapter paging
         Chapter firstChapter = currentPackage.getChapter( 0 );
@@ -117,11 +103,32 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         }
         mCurrentScene = firstScene;
         mAudioFile = firstChapter.getAudioName();
+        // TODO: prepare audio
 
-        // ContentAudioPlayer.getInstance().prepareAudio();
-        // onPrepared(MediaPlayer ) called
-        // when audio and view is ready (onResume called) -> call startContent( packageID );
+        Bitmap framebuffer = Bitmap.createBitmap( ((ContentScene) firstScene).getSceneWidth(), ((ContentScene) firstScene).getSceneHeight(), Bitmap.Config.RGB_565 );
+        mAnimationSurface = new AnimationSurface( this, this, framebuffer );
+        mGraphics = new OPPIGraphics( this, framebuffer, BitmapPool.getInstance() );
+
+        FrameLayout contentFrame = (FrameLayout)findViewById( R.id.contentFrame );
+        contentFrame.addView( mAnimationSurface );
     }
+
+    /**
+     * Called by View when android framework has finally created the view and measured the size.
+     *
+     * @param height
+     * @param width
+     */
+    @Override
+    public void onMeasure(int height, int width) {
+/*
+        Bitmap framebuffer = Bitmap.createBitmap( width, height, Bitmap.Config.RGB_565 );
+        mAnimationSurface.attachFrameBuffer( framebuffer );
+        mGraphics = new OPPIGraphics( this, framebuffer, BitmapPool.getInstance() );
+*/
+
+    }
+
     /**
      * From OnPreparedListener
      * Callback when media source is ready for playback.
@@ -130,11 +137,13 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      * @param mediaPlayer
      */
     public void onPrepared( MediaPlayer mediaPlayer ){
-        // TODO: Make sure that onResume has been called!!
+
         mAnimationSurface.startScene();
 
-        ContentAudioPlayer.getInstance().playAudio( mAudioFile, getApplicationContext());
+        //ContentAudioPlayer.getInstance().playAudio( mAudioFile, getApplicationContext());
     }
+
+
     /**
      * Method is called when user has pressed "BACK" button -> go to the previous scene
      * If this was first scene, DO nothing?
@@ -287,15 +296,14 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
     public Graphics getGraphics() {
         return mGraphics;
     }
-
     // TODO: WHAT IF PAUSED -> START TIME IS THEN WRONG. MUST "HALTED" ON PAUSE!
     @Override
     public void onResume(){
         super.onResume();
         mAnimationSurface.resume();
-        // ********************FOR TESTING PURPOSES, later called by MediaPlayer
+        // === TESTIN PURPOSES =====
         this.onPrepared( null );
-        //**************************
+        // =========================
         mCurrentScene.resume( this );
         ContentAudioPlayer.getInstance().resume();
     }
@@ -308,5 +316,22 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         if ( isFinishing() ){
             mCurrentScene.dispose();
         }
+    }
+
+    @Override
+    public int getViewHeight() {
+        int height=0;
+        if( mAnimationSurface != null ){
+            height=mAnimationSurface.getMeasuredHeight();
+        }
+        return height;
+    }
+    @Override
+    public int getViewWidth() {
+        int width=0;
+        if( mAnimationSurface != null ){
+            width=mAnimationSurface.getMeasuredWidth();
+        }
+        return width;
     }
 }
