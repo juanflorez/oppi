@@ -12,9 +12,12 @@ import com.sofia.oppi.animationengine.ContentPackage;
 import com.sofia.oppi.animationengine.JSONPackageParser;
 import com.sofia.oppi.dbUtils.DbModules;
 import com.sofia.oppi.dbUtils.InstalledModulesHelper;
+import com.sofia.oppi.dbUtils.StringXtractor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.InputStreamReader;
 
 
 /**
@@ -53,7 +56,7 @@ public class Installer {
 /** Adds a new module to the database
 *   If the module exists in the db, and moduleOk, do nothing
 */
-   public int registerPackage (ContentPackage modulePackage ) {
+   public int registerPackage (ContentPackage modulePackage, String uri ) {
        SQLiteDatabase db = dbHelper.getWritableDatabase();
        if(!checkForInstallModule(modulePackage)) {
            ContentValues values = new ContentValues();
@@ -67,6 +70,7 @@ public class Installer {
            values.put(DbModules.InstModule.MEDIUM_ICON, modulePackage.getMediumIcon());
            values.put(DbModules.InstModule.BIG_ICON, modulePackage.getBigIcon());
            values.put(DbModules.InstModule.DURATION, modulePackage.getDuration());
+           values.put(DbModules.InstModule.MODULE_ROOT, uri);
            values.put(DbModules.InstModule.CORRECT, 1);
            // Insert the new row, returning the primary key value of the new row
            long newRowId;
@@ -154,6 +158,24 @@ public class Installer {
         db.execSQL(DbModules.DELETE_MODULES_TABLE);
 
 
+    }
+
+    public void registerDirectory(String uri) {
+
+        ContentPackage gsonPackage= null;
+        JSONPackageParser mContentParser = new JSONPackageParser();
+        //TODO get the JSON package from the uri/content.json
+        //pass it to the database
+        //GSON: Using gson to create this content package
+        String tmp = null;
+        try {
+            tmp = StringXtractor.getStringFromFile(uri + "content.json");
+            mContentParser.parsePackage(tmp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            //TODO Handle this
+        }
+        gsonPackage = mContentParser.parsePackage(tmp);
     }
 }
 

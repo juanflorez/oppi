@@ -1,10 +1,18 @@
 package com.sofia.oppi.animationengine;
 
+import android.content.Context;
+
 import android.util.JsonReader;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -55,6 +63,18 @@ public class JSONPackageParser {
         }
 
         return contentpackage;
+    }
+// TODO: Having the full path to the Content.json, create all the
+// instances for the content package.
+// Use GSON in the future (requieres changes in the data model)
+    public ContentPackage parsePackage( String jsonFile){
+        Log.d(TAG, "JSONSTRING "+ jsonFile);
+
+        ContentPackage content = new ContentPackage();
+        // parse and populate
+
+        return content;
+
     }
 
     //TODO: Decide where to store the list of chapters.

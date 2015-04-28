@@ -19,13 +19,14 @@ public class UnZipper {
 
     public static final String TAG = "UnZipper ";
 
-    public static boolean unpackZip(String path, String zipFile, String destination)
+    public static String unpackZip(String path, String zipFile, String destination)
     {
         Log.d(TAG, " Path " + path);
         Log.d(TAG, " zipFile "+ zipFile);
         Log.d(TAG, " destination "+ destination);
         InputStream is;
         ZipInputStream zis;
+        String rootDir = new String();
         try
         {
             String filename;
@@ -34,6 +35,7 @@ public class UnZipper {
             ZipEntry ze;
             byte[] buffer = new byte[1024];
             int count;
+
 
             while ((ze = zis.getNextEntry()) != null)
             {
@@ -45,6 +47,11 @@ public class UnZipper {
                     File fmd = new File(destination + filename);
                     Log.d(TAG,destination + filename);
                     fmd.mkdirs();
+                    // if it is the first, it assumes it is the root directory
+                    if(rootDir.equals("")){
+                        rootDir = destination+filename;
+                    }
+                    Log.d(TAG, "Root directory "+ rootDir);
                     continue;
                 }
 
@@ -64,9 +71,9 @@ public class UnZipper {
         catch(IOException e)
         {
             e.printStackTrace();
-            return false;
+            return rootDir;
         }
 
-        return true;
+        return rootDir;
     }
 }
