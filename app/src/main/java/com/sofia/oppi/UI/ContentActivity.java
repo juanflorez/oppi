@@ -24,7 +24,6 @@ import com.sofia.oppi.animationengine.SceneObserver;
 import com.sofia.oppi.assets.BitmapPool;
 import com.sofia.oppi.assets.ContentAudioPlayer;
 import com.sofia.oppi.assets.PackagePool;
-import com.sofia.oppi.assets.ScreenAdapter;
 
 import java.util.ArrayList;
 
@@ -32,7 +31,7 @@ import java.util.ArrayList;
 /**
  *
  */
-public class ContentActivity extends Activity implements AnimationEngine, SceneObserver, ScreenAdapter {
+public class ContentActivity extends Activity implements AnimationEngine, SceneObserver{
     private static final String TAG = "CONTENT_ACTIVITY";
     private AnimationSurface mAnimationSurface=null;
     private Long mPackageID;
@@ -107,26 +106,10 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
 
         Bitmap framebuffer = Bitmap.createBitmap( ((ContentScene) firstScene).getSceneWidth(), ((ContentScene) firstScene).getSceneHeight(), Bitmap.Config.RGB_565 );
         mAnimationSurface = new AnimationSurface( this, this, framebuffer );
-        mGraphics = new OPPIGraphics( this, framebuffer, BitmapPool.getInstance() );
+        mGraphics = new OPPIGraphics( framebuffer, BitmapPool.getInstance() );
 
         FrameLayout contentFrame = (FrameLayout)findViewById( R.id.contentFrame );
         contentFrame.addView( mAnimationSurface );
-    }
-
-    /**
-     * Called by View when android framework has finally created the view and measured the size.
-     *
-     * @param height
-     * @param width
-     */
-    @Override
-    public void onMeasure(int height, int width) {
-/*
-        Bitmap framebuffer = Bitmap.createBitmap( width, height, Bitmap.Config.RGB_565 );
-        mAnimationSurface.attachFrameBuffer( framebuffer );
-        mGraphics = new OPPIGraphics( this, framebuffer, BitmapPool.getInstance() );
-*/
-
     }
 
     /**
@@ -316,22 +299,5 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         if ( isFinishing() ){
             mCurrentScene.dispose();
         }
-    }
-
-    @Override
-    public int getViewHeight() {
-        int height=0;
-        if( mAnimationSurface != null ){
-            height=mAnimationSurface.getMeasuredHeight();
-        }
-        return height;
-    }
-    @Override
-    public int getViewWidth() {
-        int width=0;
-        if( mAnimationSurface != null ){
-            width=mAnimationSurface.getMeasuredWidth();
-        }
-        return width;
     }
 }

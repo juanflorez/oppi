@@ -46,7 +46,7 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
 
         while( running ){
 
-            if( !mHolder.getSurface().isValid() || mAnimationEngine == null || mSceneRunning == false || mFramebuffer == null )
+            if( !mHolder.getSurface().isValid() || mAnimationEngine == null || mSceneRunning == false )
                 continue;
             // start editing the pixels in the surface
             Canvas canvas = mHolder.lockCanvas();
@@ -71,9 +71,6 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
 
     @Override
     public void surfaceCreated( SurfaceHolder holder ) {
-        if( mAnimationEngine != null  ){
-            mAnimationEngine.onMeasure( this.getMeasuredHeight(), this.getMeasuredHeight() );
-        }
     }
 
     @Override

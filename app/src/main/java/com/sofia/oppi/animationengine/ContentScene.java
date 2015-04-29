@@ -15,7 +15,6 @@ public class ContentScene extends Scene {
     private String mBackground="";
     private int mScreenHeight;
     private int mScreenWidth;
-    private Rect mDestRect;
     private ArrayList<Frame> mFrames=null;
     private int mCurrentFrame=0;
     private int mPresentedFrame=1;
@@ -33,7 +32,6 @@ public class ContentScene extends Scene {
         mBackground = background.substring( (background.lastIndexOf( "/") + 1), background.lastIndexOf(".") );
         mScreenHeight = Integer.parseInt( height );
         mScreenWidth = Integer.parseInt( width );
-        mDestRect = new Rect( 0, 0, mScreenWidth, mScreenHeight );
     }
 
     public String getJsonFile() {
@@ -88,7 +86,7 @@ public class ContentScene extends Scene {
             if( images != null ){
                 for( int i=0; i < images.size(); i++ ){
                     FrameImage image = images.get( i );
-                    mAnimationEngine.getGraphics().drawBitmap( image.getBitmapName(), image.getXPos(), image.getYPos(), mDestRect );
+                    mAnimationEngine.getGraphics().drawBitmap( image.getBitmapName(), image.getXPos(), image.getYPos() );
                 }
             }
             mPresentedFrame=mCurrentFrame;

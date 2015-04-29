@@ -9,7 +9,7 @@ import android.graphics.Rect;
 public interface Graphics {
 
     public void clear( int color );
-    public void drawBitmap( String bitmapName, int x, int y, Rect destRect );
+    public void drawBitmap( String bitmapName, int x, int y );
     public void drawBackground( String bitmapName );
     public int getHeight();
     public int getWidth();
