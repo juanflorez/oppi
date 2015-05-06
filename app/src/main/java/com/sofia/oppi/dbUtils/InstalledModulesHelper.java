@@ -1,19 +1,15 @@
 package com.sofia.oppi.dbUtils;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import java.sql.SQLException;
 
 /**
  * Created by juanflorez on 08/04/15.
  */
 public class InstalledModulesHelper extends SQLiteOpenHelper {
 
-    public static String TAG = "InstalledModDBHelper";
+
     public InstalledModulesHelper(Context context) {
         super(context, DbModules.DB_NAME, null, DbModules.DB_VERSION);
     }
@@ -31,16 +27,4 @@ public class InstalledModulesHelper extends SQLiteOpenHelper {
 
         onCreate(db);
     }
-    /**
-     * Returns a Cursor with the data to display locally available modules
-     * */
-    public Cursor getDisplayableModules (SQLiteDatabase db){
-
-        Cursor cursor = db.rawQuery(DbModules.GET_DISP_MODULES, null);
-        Log.d(TAG, "Total Records: "+cursor.getCount());
-        return cursor;
-    }
-
-
-
- }
+}

@@ -2,31 +2,19 @@ package com.sofia.oppi.animationengine;
 
 import android.graphics.Rect;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.ArrayList;
 
 import static java.lang.Integer.parseInt;
 
 /**
  * Created by riikka on 02/04/15.
- * It maps to scene descriptor in Chapter.json
+ *
  */
 public class ContentScene extends Scene {
-    @SerializedName("SceneFile")
     private String mJsonFile="";
-
-    @SerializedName("background")
     private String mBackground="";
-
-    @SerializedName("screenHight")
     private int mScreenHeight;
-
-    @SerializedName("screenWidth")
     private int mScreenWidth;
-
-    private Rect mDestRect;
-
     private ArrayList<Frame> mFrames=null;
     private int mCurrentFrame=0;
     private int mPresentedFrame=1;
@@ -55,7 +43,7 @@ public class ContentScene extends Scene {
     }
 
     public String getBitmapName(){
-        return root+mBackground;
+        return mBackground;
     }
 
     public int getSceneHeight(){
@@ -66,21 +54,8 @@ public class ContentScene extends Scene {
         return mScreenWidth;
     }
 
-    public void setFrames( ArrayList<Frame> frames ){
+    public void add( ArrayList<Frame> frames ){
         mFrames=frames;
-    }
-
-    public void addFrame(Frame frame){mFrames.add(frame);}
-
-    public ArrayList<Frame> getFrames() {return mFrames;}
-
-    @Override
-    public void setRoot(String path)
-    {
-        root = path;
-        for(int i = 0; i< mFrames.size(); i++){
-            mFrames.get(i).setRoot(path);
-        }
     }
 
     @Override
@@ -135,33 +110,5 @@ public class ContentScene extends Scene {
     @Override
     public void dispose() {
 
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(
-                "ContentScene{" +
-                "mJsonFile='" + mJsonFile + '\'' +
-                ", mBackground='" + mBackground + '\'' +
-                ", mScreenHeight=" + mScreenHeight +
-                ", mScreenWidth=" + mScreenWidth +
-                ", mDestRect=" + mDestRect +
-                ", mFrames=" + mFrames +
-                ", mCurrentFrame=" + mCurrentFrame +
-                ", mPresentedFrame=" + mPresentedFrame +
-                ", mSceneAudioMarkTime=" + mSceneAudioMarkTime +
-                ", mAnimationEngine=" + mAnimationEngine +
-                ", mStartTime=" + mStartTime +
-                '}'
-        );
-        for(int i=0; i< mFrames.size(); i++){
-
-            builder.append('\n');
-            builder.append(mFrames.get(i).toString());
-        }
-
-        return builder.toString();
     }
 }

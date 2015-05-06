@@ -8,9 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.sofia.oppi.R;
-import com.sofia.oppi.animationengine.FrameImage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -63,7 +61,6 @@ public class BitmapPool {
       DEBUG_CONFIG
       THIS IS JUST FOR TESTING (to read image resources, later from server)
      */
-    @Deprecated
     public void loadImages( Context context ) {
         // TODO: AsyncTask for loading all the images!
         // TODO: cache bitmaps (disk cache)
@@ -115,60 +112,5 @@ public class BitmapPool {
             }*/
             mBitmapMap.put( resourceName, bitmap );
         }
-
-
-
-    }
-
-    public void loadImages( Context context, ArrayList<FrameImage> frameImages) {
-        // TODO: AsyncTask for loading all the images!
-        // TODO: cache bitmaps (disk cache)
-        // TODO: save bitmap for later use
-        Bitmap bitmap=null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        String resourceName=null;
-
-        //==== TODO: this must be done also in the "RELEASE_CONFIG":===
-        WindowManager windowManager = (WindowManager)context.getSystemService( Context.WINDOW_SERVICE );
-        DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics( metrics );
-        int realHeight = metrics.heightPixels;
-        int realWidth = metrics.widthPixels;
-        //==========================================
-
-
-        for( int i=0; i < frameImages.size(); i++ ){
-
-            resourceName = frameImages.get(i).getBitmapName();
-
-            options.inJustDecodeBounds = true;
-            // does not allocate yet memory, just for getting the image dimensions
-            //BitmapFactory.decodeResource( context.getResources(), frameImages.get(i).getBitmapName(), options );
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            String imageType = options.outMimeType;
-            // TODO: check the original image size and check if that is ok, otherwise need to calculate new size for the image
-            //int size = calculateInSampleSize( options, width, heigth );
-
-
-            bitmap = BitmapFactory.decodeFile(resourceName, options);
-            // finally allocate memory and load the image
-            options.inJustDecodeBounds = false;
-            //bitmap = BitmapFactory.decodeResource( context.getResources(), imageResources[i], options );
-
-/*            Bitmap scaledBitmap = null;
-            if( resourceName.equalsIgnoreCase( "background1") ){
-                scaledBitmap = Bitmap.createScaledBitmap( bitmap, 480, 690, false );
-            }
-            if( scaledBitmap != null ){
-                mBitmapMap.put( resourceName, scaledBitmap );
-            }else{
-                mBitmapMap.put( resourceName, bitmap );
-            }*/
-            mBitmapMap.put( resourceName, bitmap );
-        }
-
-
-
     }
 }

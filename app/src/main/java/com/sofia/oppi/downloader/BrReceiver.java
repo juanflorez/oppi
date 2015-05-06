@@ -120,7 +120,7 @@ public class BrReceiver extends BroadcastReceiver{
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String deleteQuery = "DELETE FROM " + DbModules.OnGoingDownloads.TABLE_NAME +
-                " WHERE " + DbModules.OnGoingDownloads.QUEUE_ID + " = " + id;
+                " WHERE " + DbModules.OnGoingDownloads._ID + " = " + id;
 
         db.execSQL( deleteQuery );
 

@@ -1,13 +1,41 @@
 package com.sofia.oppi.store;
 
+import android.app.DownloadManager;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
+import android.widget.GridView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import com.sofia.oppi.Constants;
 import com.sofia.oppi.R;
+import com.sofia.oppi.downloader.AppController;
+import com.sofia.oppi.downloader.BrReceiver;
+import com.sofia.oppi.downloader.Downloader;
+import com.sofia.oppi.store.storeDB.ModuleRecord;
+import com.sofia.oppi.store.storeDB.ModuleRecordAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 public class StoreMainActivity extends ActionBarActivity {
@@ -19,7 +47,7 @@ public class StoreMainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_store_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new StoreModulesFragment())
+                    .add(R.id.container, new ModulesFragment())
                     .commit();
         }
     }

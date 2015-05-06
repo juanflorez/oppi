@@ -4,7 +4,7 @@ package com.sofia.oppi.animationengine;
  * Created by riikka on 09/04/15.
  *
  */
-public abstract class Scene extends ModuleElement {
+public abstract class Scene {
 
     public Scene(){
     }

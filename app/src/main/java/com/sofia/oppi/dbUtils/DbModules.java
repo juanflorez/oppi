@@ -21,8 +21,6 @@ public class DbModules {
     public static final String DELETE_DOWNLOADS_TABLE = "DROP TABLE IF EXISTS " +
                                                  OnGoingDownloads.TABLE_NAME;
 
-    public static final String GET_DISP_MODULES = "SELECT * FROM " + InstModule.TABLE_NAME;
-
     static {
         CREATE_MODULES_TABLE = "" +
                 "CREATE TABLE IF NOT EXISTS " + InstModule.TABLE_NAME + " ( " +

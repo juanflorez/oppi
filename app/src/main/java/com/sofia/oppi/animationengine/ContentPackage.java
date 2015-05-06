@@ -1,8 +1,6 @@
 package com.sofia.oppi.animationengine;
 
-import android.util.Log;
-
-import com.google.gson.annotations.SerializedName;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -10,336 +8,90 @@ import static java.lang.Integer.*;
 
 /**
  * Class that represents the content
- * {
- "PackageData": {
- "PackageID": 20150321,
- "Name": "Test Lesson V2",
- "PackageVersion": 1,
- "EngineVersion": 1,
- "MinimumResolution": "ldpi",
- "MaximumResolution": "xxxhdpi"
- },
-
- "Desktop": {
- "SmallIcon": "icons/small.png",
- "MediumIcon": "icons/medium.png",
- "BigIcon": "icons/big.png",
- "Duration": "00:00:37"
- }
-
- "chaptersObj" : [
- {"FileName" : "chapter1.json"}
- ]
- }
+ *
  */
-public class ContentPackage extends ModuleElement{
+public class ContentPackage {
 
-    @SerializedName("PackageData")
-    private PackageData packageData;
-
-    @SerializedName("Desktop")
-    private Desktop desktop;
-
-    @SerializedName("Chapters")
-    ArrayList<ChapterName> chapters = null;
-
-
-    ArrayList<Chapter> chaptersObj;
-
-
-
-    private String Name ="";
-    private Long   PackageID;
-    private String EngineVersion ="";
-    private String PackageVersion ="";
-    private String MinResolution ="";
-    private String MaxResolution ="";
-
-
-
-
-
+    ArrayList<Chapter> mChapters = null;
+    private String mName="";
+    private Long mPackageID;
+    private String mEngineVersion="";
+    private String mPackageVersion="";
+    private String mMinResolution="";
+    private String mMaxResolution="";
+    private String mSmallIcon="";
+    private String mMediumIcon="";
+    private String mBigIcon="";
     private int mDuration=0;
 
     /*Empty holder*/
     public ContentPackage () {
-        chaptersObj = new ArrayList<Chapter>();
+
     }
 //TODO the desktop component should also be added here
     public ContentPackage(String name, Long id, String packVersion, String engVersion, String minRes, String maxRes ){
-        Name =name;
-        PackageID =id;
-        EngineVersion =engVersion;
-        PackageVersion =packVersion;
-        MinResolution =minRes;
-        MaxResolution =maxRes;
-        chaptersObj = new ArrayList<Chapter>();
+        mName=name;
+        mPackageID=id;
+        mEngineVersion=engVersion;
+        mPackageVersion=packVersion;
+        mMinResolution=minRes;
+        mMaxResolution=maxRes;
+        mChapters = new ArrayList<Chapter>();
     }
 
-
     public String getName() {
-        return packageData.getName();
+        return mName;
     }
 
     public Long getPackageID() {
-        return packageData.getPackageID();
+        return mPackageID;
     }
 
     public String getEngineVersion() {
-        return packageData.getEngineVersion();
+        return mEngineVersion;
     }
 
     public String getPackageVersion() {
-        return packageData.getPackageVersion();
+        return mPackageVersion;
     }
 
     public String getMinResolution() {
-        return packageData.getMinimumResolution();
+        return mMinResolution;
     }
 
     public String getMaxResolution() {
-        return packageData.getMaximumResolution();
+        return mMaxResolution;
     }
 
     public String getSmallIcon() {
-        return root+desktop.getSmallIcon();
+        return mSmallIcon;
     }
 
     public String getMediumIcon() {
-
-        return root+desktop.getMediumIcon();
+        return mMediumIcon;
     }
 
     public String getBigIcon() {
-
-        return root+desktop.getBigIcon();
+        return mBigIcon;
     }
 
-    //TODO modify this method to a simple setDuration  after GSON is tested
     public void setDuration( String duration ){
-        try {
-            String[] times = duration.split(":", 3);
-            mDuration = parseInt(times[2]) + parseInt(times[1]) * 60 + parseInt(times[0]) * 3600;
-            desktop.setDuration(duration);
-        }catch (Exception e) {
-            Log.e(getClass().getName(), "Wrong duration for package "+ getName());
-            mDuration = 0;
-        }
-
+        String[] times = duration.split( ":", 3);
+        mDuration= parseInt(times[2]) + parseInt(times[1])*60 + parseInt(times[0])*3600;
     }
     public int getDuration() {
-
-       String[] times = desktop.getDuration().split(":",3);
-       return parseInt(times[2]) + parseInt(times[1])*60 + parseInt(times[0])*3600;
+        return mDuration;
     }
 
     public void addChapter( Chapter chapter ){
-        chaptersObj.add(chapter);
+        mChapters.add( chapter );
     }
 
     public Chapter getChapter( int ind ){
         Chapter chapter=null;
-        if( chaptersObj != null && ind < chaptersObj.size()){
-            chapter = chaptersObj.get( ind );
+        if( mChapters!= null && ind < mChapters.size()){
+            chapter = mChapters.get( ind );
         }
         return chapter;
-    }
-
-    public void setDesktop(Desktop desktop){
-        this.desktop = desktop;
-    }
-
-
-
-    public Desktop getDesktop() { return desktop;}
-
-
-    @Override
-    public void setRoot(String path)
-    {
-        root = path;
-        for(int i=0; i< chaptersObj.size();i++){
-            chaptersObj.get(i).setRoot(path);
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(
-                 "ContentPackage{" +
-                "packageData=" + packageData +
-                ", desktop=" + desktop +
-                ", root='" + root + '\'' +
-                ", Name='" + Name + '\'' +
-                ", PackageID=" + PackageID +"'\n'"+
-                ", EngineVersion='" + EngineVersion + '\'' +
-                ", PackageVersion='" + PackageVersion + '\'' +
-                ", MinResolution='" + MinResolution + '\'' +
-                ", MaxResolution='" + MaxResolution + '\'' +
-                ", mDuration=" + mDuration + '\'' +
-                ", CHAPTERS: "+"'\n'"
-         );
-        for (int i=0; i<chaptersObj.size();i++){
-            builder.append(chaptersObj.get(i).toString());
-            builder.append("'\n'");
-        }
-
-        return builder.toString();
-    }
-
-    static class Desktop {
-        private String SmallIcon="";
-        private String MediumIcon="";
-        private String BigIcon="";
-        private String Duration="";
-
-        private Desktop() {
-        }
-
-        public String getSmallIcon() {
-            return SmallIcon;
-        }
-
-        public void setSmallIcon(String smallIcon) {
-            SmallIcon = smallIcon;
-        }
-
-        public String getMediumIcon() {
-            return MediumIcon;
-        }
-
-        public void setMediumIcon(String mediumIcon) {
-            MediumIcon = mediumIcon;
-        }
-
-        public String getBigIcon() {
-            return BigIcon;
-        }
-
-        public void setBigIcon(String bigIcon) {
-            BigIcon = bigIcon;
-        }
-
-        public String getDuration() {
-            return Duration;
-        }
-
-        public void setDuration(String duration) {
-            Duration = duration;
-        }
-
-        @Override
-        public String toString() {
-            return "Desktop{" +
-                    "SmallIcon='" + SmallIcon + '\'' +
-                    ", MediumIcon='" + MediumIcon + '\'' +
-                    ", BigIcon='" + BigIcon + '\'' +
-                    ", Duration='" + Duration + '\'' +
-                    '}';
-        }
-    }
-
-    static class PackageData {
-
-        @SerializedName("PackageID")
-        Long packageID;
-
-        @SerializedName("Name")
-        String name = "";
-
-        @SerializedName("PackageVersion")
-        String packageVersion = "";
-
-        @SerializedName("EngineVersion")
-        String EngineVersion ="";
-        String MinimumResolution="";
-        String MaximumResolution="";
-
-        String rootPath ="";
-
-        public PackageData(){}
-
-
-
-        public Long getPackageID() {
-            return packageID;
-        }
-
-        public void setPackageID(Long packageID) {
-            this.packageID = packageID;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getPackageVersion() {
-            return packageVersion;
-        }
-
-        public void setPackageVersion(String packageVersion) {
-            this.packageVersion = packageVersion;
-        }
-
-        public String getEngineVersion() {
-            return EngineVersion;
-        }
-
-        public void setEngineVersion(String engineVersion) {
-            EngineVersion = engineVersion;
-        }
-
-        public String getMinimumResolution() {
-            return MinimumResolution;
-        }
-
-        public void setMinimumResolution(String minimumResolution) {
-            MinimumResolution = minimumResolution;
-        }
-
-        public String getMaximumResolution() {
-            return MaximumResolution;
-        }
-
-        public void setMaximumResolution(String maximumResolution) {
-            MaximumResolution = maximumResolution;
-        }
-
-        @Override
-        public String toString() {
-            return "PackageData{" +
-                    "packageID=" + packageID +
-                    ", name='" + name + '\'' +
-                    ", packageVersion='" + packageVersion + '\'' +
-                    ", EngineVersion='" + EngineVersion + '\'' +
-                    ", MinimumResolution='" + MinimumResolution + '\'' +
-                    ", MaximumResolution='" + MaximumResolution + '\'' +
-                    ", rootPath='" + rootPath + '\'' +
-                    '}';
-        }
-    }
-
-    static class ChapterName {
-
-        @SerializedName("FileName")
-        String fileName = "";
-
-        public ChapterName(){}
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
-
-
-
     }
 }
