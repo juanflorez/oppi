@@ -81,15 +81,16 @@ public class Downloader  {
 
     public void downloadModule(String ModuleURL) {
         dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
-
         Request request = new Request(
                 Uri.parse(ModuleURL));
         request.setDestinationInExternalFilesDir(mContext, null, "lesson.zip");
-
         createTable();
-
-        //Add the request to the Download queue and to the database for the receiver.
         addDownloadToDb(dm.enqueue(request),ModuleURL);
+
+        //TODO: I cannot set up the receiver before start the download... BAD BOY BAD BOY!
+        //TODO: The list of ongoing downloads should be in a Database
+        //AppController.getInstance().addPendingModule(enqueue);
+
 
     }
 

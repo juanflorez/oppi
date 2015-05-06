@@ -21,7 +21,6 @@ import com.sofia.oppi.animationengine.ContentPackage;
 import com.sofia.oppi.animationengine.Frame;
 import com.sofia.oppi.animationengine.JSONPackageParser;
 import com.sofia.oppi.assets.PackagePool;
-import com.sofia.oppi.dbUtils.StringXtractor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +84,6 @@ public class MainActivity extends ActionBarActivity {
         // TODO: will user download only whole chapters?
 
         ContentPackage contentPackage=null;
-
         Chapter chapter=null;
 
         int[] resourcesToRead = {R.raw.content, R.raw.chapter1, R.raw.first, R.raw.second, R.raw.third };
@@ -100,7 +98,6 @@ public class MainActivity extends ActionBarActivity {
                 jsonPackageReader = new JsonReader( new InputStreamReader( jsonPackageStream, "UTF-8" ) );
                 if( resourcesToRead[i] == R.raw.content ) {
                     contentPackage = mContentParser.parsePackage( jsonPackageReader );
-
                 }else if( resourcesToRead[i] == R.raw.chapter1 ){
                     chapter = mContentParser.parseChapter( jsonPackageReader );
                     contentPackage.addChapter( chapter );
