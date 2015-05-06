@@ -12,20 +12,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.sofia.oppi.R;
-import com.sofia.oppi.UI.InstalledModules;
+
 import com.sofia.oppi.dbUtils.DbModules;
 import com.sofia.oppi.dbUtils.InstalledModulesHelper;
-import com.sofia.oppi.downloader.AppController;
-import com.sofia.oppi.downloader.LruBitmapCache;
 import com.sofia.oppi.dbUtils.LocalModuleRecord;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -39,7 +32,7 @@ public class LocalModulesAdapter extends ArrayAdapter<LocalModuleRecord> {
 
 
     public LocalModulesAdapter(Context context){
-        super(context, R.layout.store_element);
+        super(context, R.layout.installed_element);
 
     }
 
@@ -97,15 +90,25 @@ public class LocalModulesAdapter extends ArrayAdapter<LocalModuleRecord> {
         int nameColumn = cursor.getColumnIndex(DbModules.InstModule.MODULE_NAME);
         int idColumn   = cursor.getColumnIndex(DbModules.InstModule.MODULE_ID);
         int iconPathColumn = cursor.getColumnIndex(DbModules.InstModule.MEDIUM_ICON);
+        int rootColumn = cursor.getColumnIndex(DbModules.InstModule.MODULE_ROOT);
+        //TODO Change this hardcoded hack
+        if(cursor.getCount()==0){
+            LocalModuleRecord emptyRecord = new LocalModuleRecord();
+            emptyRecord.setModuleName("NO MODULES YET");
+
+            emptyRecord.setIconPath("/storage/sdcard/Sofia/TestLessonV2/icons/big.png");
+        }
 
         while(cursor.moveToNext()){
             LocalModuleRecord tmp = new LocalModuleRecord();
             tmp.setModuleID(cursor.getString(idColumn));
             tmp.setModuleName(cursor.getString(nameColumn));
             tmp.setIconPath(cursor.getString(iconPathColumn));
+            tmp.setRoot(cursor.getString(rootColumn));
             arrayList.add(tmp);
 
         }
+
         swapRecords(arrayList);
 
     }

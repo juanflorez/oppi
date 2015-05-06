@@ -2,26 +2,22 @@ package com.sofia.oppi.UI;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.sofia.oppi.animationengine.ContentScene;
-import com.sofia.oppi.assets.BitmapPool;
 import com.sofia.oppi.R;
 import com.sofia.oppi.animationengine.Chapter;
 import com.sofia.oppi.animationengine.ContentPackage;
 import com.sofia.oppi.animationengine.Frame;
 import com.sofia.oppi.animationengine.JSONPackageParser;
 import com.sofia.oppi.assets.PackagePool;
-import com.sofia.oppi.dbUtils.StringXtractor;
+
+import com.sofia.oppi.UI.InstalledModulesFragment.OnFragmentInteractionListener;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +25,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
+
 // TODO: support ONLY LANDSCAPE!!!
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+                              implements OnFragmentInteractionListener {
     final private String TAG="MainActivity";
     JSONPackageParser mContentParser=null;
 
@@ -44,29 +42,29 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ContentListFragment())
+                    .add(R.id.container, new InstalledModulesFragment())
                     .commit();
         }
 
         // create all types of animation engines, USE ABSTRACTFACTORY PATTERN?
 
         // create package parser
-        mContentParser = new JSONPackageParser();
+     //   mContentParser = new JSONPackageParser();
 
 
 
-        this.parseResources();
+     //   this.parseResources();
         // FOR TESTING purposes, later get bitmaps from server. now from resources
-        BitmapPool.getInstance().loadImages( this );
-
+       // BitmapPool.getInstance().loadImages( this );
+/**
         final Button testButton = (Button)findViewById( R.id.testButton );
         testButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startLesson();
+ //               startLesson();
             }
         });
-
+*/
     }
     public void startLesson(){
         // TODO: add one button here to start the new activity for testing purposes
@@ -110,12 +108,12 @@ public class MainActivity extends ActionBarActivity {
 
                     // TODO: figure out better way to link these files!!!
                     if( chapter != null ){
-                        ArrayList<ContentScene> items = chapter.getAllItems();
+                        ArrayList<ContentScene> items = chapter.getAllScenes();
                         for( ContentScene item : items ){
                             ContentScene sceneScreen = item;
 
                             if( sceneScreen.getJsonFile().contains( resourceName ) ){
-                                sceneScreen.add( frames );
+                                sceneScreen.setFrames( frames );
                                 break;
                             }
                         }
@@ -153,39 +151,14 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
     /**
-     * A fragment for showing the available contents.
-     * TODO: separate file?
+     * to communicate between fragment and activity
+     * @param id
      */
-    public static class ContentListFragment extends Fragment {
-
-        public ContentListFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_contentlist, container, false);
-
-            // TODO: get the list of available contents from ContentPool show them, let usr select
-
-            // TODO: check the version:
-/*
-            try{
-                String version = firstTestContent.getString( "version");
-
-                if( version.equalsIgnoreCase( "0.1") ){
-                    // get the right type of animation engine
-                    //mAnimationEngine = AnimationEngineFactory.getEngine( version );
-                }
-            }catch( JSONException e ){
-                Log.e( TAG, e.toString() );
-            }
-*/
-
-            return rootView;
-        }
+    public void onFragmentInteraction(String id){
+         //TODO decide if it is needed
     }
+
+
+
 }

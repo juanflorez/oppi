@@ -7,9 +7,15 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sofia.oppi.Constants;
+import com.sofia.oppi.dbUtils.StringXtractor;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
@@ -41,6 +47,7 @@ public class JSONPackageParser {
                 if( elementName.equalsIgnoreCase( "packagedata" ) ){
                     // read package data
                     contentpackage = readPackageInfo( reader );
+                    Log.d(TAG + "toString:", reader.toString());
 
                 }else if( elementName.equalsIgnoreCase( "desktop") ) {
                     // TODO: should this information added to package
@@ -59,7 +66,7 @@ public class JSONPackageParser {
 
         }catch( IOException e ) {
 
-            Log.e( TAG, e.toString() );
+            Log.e( TAG + " ParsePackage", e.toString() );
         }
 
         return contentpackage;
@@ -67,10 +74,33 @@ public class JSONPackageParser {
 // TODO: Having the full path to the Content.json, create all the
 // instances for the content package.
 // Use GSON in the future (requieres changes in the data model)
-    public ContentPackage parsePackage( String jsonFile){
-        Log.d(TAG, "JSONSTRING "+ jsonFile);
 
-        ContentPackage content = new ContentPackage();
+    public ContentPackage parsePackage( String pathToFile){
+        Log.d(TAG, "JSONSTRING "+ pathToFile);
+        File jsonFile = new File(pathToFile);
+        ContentPackage content = null;
+        InputStream fis = null;
+        try {
+            fis = new FileInputStream(pathToFile+ Constants.CONTENT_FILE);
+            JsonReader jsonReader = new JsonReader(new InputStreamReader(fis));
+           // content = parsePackage(jsonReader);
+            // extract json string
+            String jsonString = StringXtractor.getStringFromFile(pathToFile+"/content.json");
+            // use gson to create the instance
+            content = readPackageInfo(jsonString);
+
+        } catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        // add the chapters:
+
+
         // parse and populate
 
         return content;
@@ -99,17 +129,34 @@ public class JSONPackageParser {
 
     }
 
+    private ContentPackage readPackageInfo (String JSONString) {
+        Log.d(TAG, "Using GSON to decode Package");
+        ContentPackage thePackage = new ContentPackage();
+
+        Gson gson = new Gson();
+        thePackage = gson.fromJson(JSONString, ContentPackage.class);
+        Log.d(TAG, "Decoded "+ thePackage.getDesktop().getMediumIcon());
+        return thePackage;
+    }
+
     /**
      * Method for getting the PackageData" element from JSON
      * @param reader
      */
-    private ContentPackage readPackageInfo( JsonReader reader ) throws IOException {
+    @Deprecated
+    /**
+     * using GSON to dump the json file into an instance of ContentPackage
+     */
+    private ContentPackage  readPackageInfo( JsonReader reader ) throws IOException {
         String id="";
         String name="";
         String packversion="";
         String engversion="";
         String minres="";
         String maxres="";
+        String iconSmall="";
+        String iconMedium="";
+        String iconBig="";
         ContentPackage pack=null;
         // TODO; test if nextlong etc. works...did not work earlier with hardcoded jsons
 

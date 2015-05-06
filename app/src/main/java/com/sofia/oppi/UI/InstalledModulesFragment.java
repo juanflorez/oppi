@@ -1,6 +1,7 @@
 package com.sofia.oppi.UI;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,24 +10,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sofia.oppi.R;
 
 import com.sofia.oppi.UI.adapters.LocalModulesAdapter;
+import com.sofia.oppi.animationengine.ContentPackage;
+import com.sofia.oppi.animationengine.ModuleGsonParser;
+import com.sofia.oppi.assets.PackagePool;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
+
 public class InstalledModulesFragment extends Fragment {
 
 
-
+    public final String TAG = "InstalledModulesFragment";
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -40,12 +37,7 @@ public class InstalledModulesFragment extends Fragment {
      */
     private LocalModulesAdapter mAdapter;
 
-    // TODO: Rename and change types of parameters
-    public static InstalledModulesFragment newInstance() {
-        InstalledModulesFragment fragment = new InstalledModulesFragment();
 
-        return fragment;
-    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -55,11 +47,42 @@ public class InstalledModulesFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: Change Adapter to display your content
         mAdapter = new LocalModulesAdapter(getActivity());
+        // Set the adapter
+        mGridView = (GridView) getView().findViewById(R.id.installed_modules_grid);
+        mGridView.setAdapter(mAdapter);
         mAdapter.fetchModules();
+
+        //Set OnItemClickListener so we can be notified on item clicks
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Toast.makeText(getActivity(), "You Clicked at " +
+                        mAdapter.getItem(position).getModuleName(), Toast.LENGTH_SHORT).show();
+
+                // TODO: add one button here to start the new activity for testing purposes
+                // LATER USER SELECTS THE PACKAGE SHE WANTS TO SEE FROM THE LIST.
+                Intent intent  = new Intent( getActivity(), ContentActivity.class );
+                long tmpID = mAdapter.getItem(position).getLongID();
+                String tmpRoot = mAdapter.getItem(position).getRoot();
+                intent.putExtra( "PACKAGE_ID", tmpID );
+                intent.putExtra("PACKAGE_ROOT", tmpRoot);
+                ContentPackage contentPackage = new ContentPackage();
+                try{
+                   contentPackage = ModuleGsonParser.getContentPackage(tmpRoot);
+                   } catch (Exception e) {
+                        e.printStackTrace();
+                   }
+                PackagePool.getInstance().addContent(contentPackage);
+                startActivity(intent); // calls pause for this activity!
+            }
+
+        });
+
 
     }
 
@@ -67,17 +90,12 @@ public class InstalledModulesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_installed_grid, container, false);
-
-        // Set the adapter
-        mGridView = (GridView) view.findViewById(R.id.installed_modules_grid);
-        mGridView.setAdapter(mAdapter);
-        mAdapter.fetchModules();
-
-        // Set OnItemClickListener so we can be notified on item clicks
-        //mGridView.setOnItemClickListener(this);
+        // TODO: Change Adapter to display your content
 
         return view;
     }
+
+
 
     @Override
     public void onAttach(Activity activity) {

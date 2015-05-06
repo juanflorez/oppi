@@ -8,8 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.JsonReader;
 import android.util.Log;
 
+import com.sofia.oppi.Constants;
 import com.sofia.oppi.animationengine.ContentPackage;
 import com.sofia.oppi.animationengine.JSONPackageParser;
+import com.sofia.oppi.animationengine.ModuleGsonParser;
 import com.sofia.oppi.dbUtils.DbModules;
 import com.sofia.oppi.dbUtils.InstalledModulesHelper;
 import com.sofia.oppi.dbUtils.StringXtractor;
@@ -56,19 +58,23 @@ public class Installer {
 /** Adds a new module to the database
 *   If the module exists in the db, and moduleOk, do nothing
 */
+//TODO: If the module exists, replace it.
    public int registerPackage (ContentPackage modulePackage, String uri ) {
+
        SQLiteDatabase db = dbHelper.getWritableDatabase();
+       db.execSQL(DbModules.CREATE_MODULES_TABLE);
        if(!checkForInstallModule(modulePackage)) {
            ContentValues values = new ContentValues();
-           values.put(DbModules.InstModule._ID, modulePackage.getPackageID());
+
+           values.put(DbModules.InstModule.MODULE_ID,modulePackage.getPackageID());
            values.put(DbModules.InstModule.MODULE_NAME, modulePackage.getName());
            values.put(DbModules.InstModule.MODULE_VERSION, modulePackage.getPackageVersion());
            values.put(DbModules.InstModule.ENGINE_VERSION, modulePackage.getEngineVersion());
            values.put(DbModules.InstModule.MINIMUM_RES, modulePackage.getMinResolution());
            values.put(DbModules.InstModule.MAXIMUM_RES, modulePackage.getMaxResolution());
-           values.put(DbModules.InstModule.SMALL_ICON, modulePackage.getSmallIcon());
+           values.put(DbModules.InstModule.SMALL_ICON,  modulePackage.getSmallIcon());
            values.put(DbModules.InstModule.MEDIUM_ICON, modulePackage.getMediumIcon());
-           values.put(DbModules.InstModule.BIG_ICON, modulePackage.getBigIcon());
+           values.put(DbModules.InstModule.BIG_ICON,    modulePackage.getBigIcon());
            values.put(DbModules.InstModule.DURATION, modulePackage.getDuration());
            values.put(DbModules.InstModule.MODULE_ROOT, uri);
            values.put(DbModules.InstModule.CORRECT, 1);
@@ -81,6 +87,7 @@ public class Installer {
            Log.i("Item added to db", modulePackage.getName() + " " + newRowId);
            return 1;
        } else {
+           Log.e("FAILED to add Item " + modulePackage.getPackageID() + " to db", modulePackage.getName());
            return 0;
        }
    }
@@ -108,50 +115,15 @@ public class Installer {
         );
         if ( cursor.getCount() > 0)
         {
-            Log.i(TAG,"The item DOES NOT exists in the DB");
-            return false;
+            Log.i(TAG,"The item exists in the DB");
+            return true;
         }
         Log.i(TAG,"The item " + modulePackage.getPackageID().toString() + " exists in the DB");
         // TODO check if the module is OK
-        return true;
+        return false;
 
     }
 
-/**It assumes that the JSONObject is a valid module from the online repository
-* */
-//TODO write exception for invalid module
-     public boolean registerPackage(JSONObject module) throws JSONException{
-
-         SQLiteDatabase db = dbHelper.getWritableDatabase();
-         ContentValues values = new ContentValues();
-         values.put(DbModules.InstModule._ID, module.getString("packageID"));
-         values.put(DbModules.InstModule.MODULE_NAME, module.getString("Name"));
-         values.put(DbModules.InstModule.MODULE_VERSION, module.getString("packageVersion"));
-         values.put(DbModules.InstModule.ENGINE_VERSION, module.getString("engineVersion"));
-         values.put(DbModules.InstModule.MINIMUM_RES, module.getString("MinimumResolution"));
-         values.put(DbModules.InstModule.MAXIMUM_RES, module.getString("MaximumResolution"));
-         values.put(DbModules.InstModule.SMALL_ICON, module.getString("SmallIcon"));
-         values.put(DbModules.InstModule.MEDIUM_ICON, module.getString("MediumIcon"));
-         values.put(DbModules.InstModule.BIG_ICON, module.getString("BigIcon"));
-         values.put(DbModules.InstModule.DURATION,module.getString("Duration"));
-         values.put(DbModules.InstModule.CORRECT, 1);
-
-
-
-         try {
-             // Insert the new row, returning the primary key value of the new row
-             long newRowId;
-             newRowId = db.insert(
-                     DbModules.InstModule.TABLE_NAME,
-                     null,
-                     values);
-             Log.i("Item added to db", module.getString("Name") + " " + newRowId);
-         }catch(SQLiteConstraintException u){
-             Log.i(TAG, u.getLocalizedMessage());
-
-         }
-             return true;
-    }
 
     public void deleteDatabase(){
         SQLiteDatabase db= dbHelper.getWritableDatabase();
@@ -162,20 +134,21 @@ public class Installer {
 
     public void registerDirectory(String uri) {
 
-        ContentPackage gsonPackage= null;
-        JSONPackageParser mContentParser = new JSONPackageParser();
+
         //TODO get the JSON package from the uri/content.json
         //pass it to the database
         //GSON: Using gson to create this content package
-        String tmp = null;
+        ContentPackage pack;
         try {
-            tmp = StringXtractor.getStringFromFile(uri + "content.json");
-            mContentParser.parsePackage(tmp);
+            pack = ModuleGsonParser.getContentPackage(uri);
+            registerPackage(pack, uri);
+            Log.d(TAG, "PARSED: "+pack.getName() );
         } catch (Exception e) {
             e.printStackTrace();
             //TODO Handle this
         }
-        gsonPackage = mContentParser.parsePackage(tmp);
+
+
     }
 }
 
