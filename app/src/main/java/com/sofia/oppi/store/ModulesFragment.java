@@ -31,13 +31,13 @@ import java.util.ArrayList;
 /**
  * Modules available at the store.
  */
-public  class StoreModulesFragment extends Fragment {
+public  class ModulesFragment extends Fragment {
 
     public final String TAG = "StoreModulesFragment";
     private ModuleRecordAdapter modulesAdapter;
     private Downloader downloader;
 
-    public StoreModulesFragment() {
+    public ModulesFragment() {
 
     }
 

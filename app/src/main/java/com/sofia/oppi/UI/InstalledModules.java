@@ -2,17 +2,19 @@ package com.sofia.oppi.UI;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.sofia.oppi.R;
 
-import com.sofia.oppi.UI.adapters.LocalModulesAdapter;
+import com.sofia.oppi.UI.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -23,27 +25,37 @@ import com.sofia.oppi.UI.adapters.LocalModulesAdapter;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class InstalledModulesFragment extends Fragment {
+public class InstalledModules extends Fragment implements AbsListView.OnItemClickListener {
 
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     /**
      * The fragment's ListView/GridView.
      */
-    private GridView mGridView;
+    private AbsListView mListView;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private LocalModulesAdapter mAdapter;
+    private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static InstalledModulesFragment newInstance() {
-        InstalledModulesFragment fragment = new InstalledModulesFragment();
-
+    public static InstalledModules newInstance(String param1, String param2) {
+        InstalledModules fragment = new InstalledModules();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -51,30 +63,34 @@ public class InstalledModulesFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public InstalledModulesFragment() {
+    public InstalledModules() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: Change Adapter to display your content
-        mAdapter = new LocalModulesAdapter(getActivity());
-        mAdapter.fetchModules();
 
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+        // TODO: Change Adapter to display your content
+        mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_installed_grid, container, false);
+        View view = inflater.inflate(R.layout.fragment_installed_modules, container, false);
 
         // Set the adapter
-        mGridView = (GridView) view.findViewById(R.id.installed_modules_grid);
-        mGridView.setAdapter(mAdapter);
-        mAdapter.fetchModules();
+        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
-        //mGridView.setOnItemClickListener(this);
+        mListView.setOnItemClickListener(this);
 
         return view;
     }
@@ -97,12 +113,12 @@ public class InstalledModulesFragment extends Fragment {
     }
 
 
-
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            //mListener.onFragmentInteraction(LocalModules.get(position).id);
+            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }
     }
 
@@ -112,7 +128,7 @@ public class InstalledModulesFragment extends Fragment {
      * to supply the text it should use.
      */
     public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mGridView.getEmptyView();
+        View emptyView = mListView.getEmptyView();
 
         if (emptyView instanceof TextView) {
             ((TextView) emptyView).setText(emptyText);
