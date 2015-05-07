@@ -14,6 +14,7 @@ import android.util.Log;
 import com.sofia.oppi.Constants;
 import com.sofia.oppi.dbUtils.DbModules;
 import com.sofia.oppi.dbUtils.DownloadingModulesHelper;
+import com.sofia.oppi.install.Installer;
 
 import java.io.File;
 import java.util.Iterator;
@@ -83,6 +84,7 @@ public class BrReceiver extends BroadcastReceiver{
                             unZipFile(Uri.parse(downloadPath).toString(), zipFileName);
 
                             if(!uZipedLocal.equals("")) {
+                                install(uZipedLocal);
                                 AppController.getInstance().removeFromPendingModules(downloadID);
                             }
 
@@ -97,6 +99,14 @@ public class BrReceiver extends BroadcastReceiver{
             }
             closeDb();
         }
+
+
+//Calls the installer to register the module in the database.
+
+    private void install(String uZipedLocal) {
+        Installer.getInstance(mContext).registerDirectory(uZipedLocal);
+
+    }
 
     private Cursor queryModuleDownloads() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -113,7 +123,7 @@ public class BrReceiver extends BroadcastReceiver{
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String deleteQuery = "DELETE FROM " + DbModules.OnGoingDownloads.TABLE_NAME +
-                " WHERE " + DbModules.OnGoingDownloads._ID + " = " + id;
+                " WHERE " + DbModules.OnGoingDownloads.QUEUE_ID + " = " + id;
 
         db.execSQL( deleteQuery );
 
@@ -124,11 +134,9 @@ public class BrReceiver extends BroadcastReceiver{
     private String unZipFile(String path, String zipFile){
         String destination = Environment.getExternalStorageDirectory().getAbsolutePath()+
                 Constants.HOME_DIR;
-        if(UnZipper.unpackZip(path, zipFile, destination)) {
-            return destination;
-        }
-        //TODO Delete the zip file after it has been expanded.
-        return "";
+        // TODO Delete zip file after successful extraction
+        return UnZipper.unpackZip(path, zipFile, destination);
+
     }
 
     private void closeDb(){

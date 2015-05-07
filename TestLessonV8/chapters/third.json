@@ -1,0 +1,47 @@
+[
+  {
+      "name" : "frame_13",
+      "duration" : "00:00:01",  
+      "images": [
+        {"file":"resources/one.png", "pos_x" : "495", "pos_y" : "225"},
+        {"file":"resources/one.png", "pos_x" : "635", "pos_y" : "225"}
+       ]
+  },
+
+  {
+      "name" : "frame_14",
+      "duration" : "00:00:01",  
+      "images": [
+        {"file":"resources/one.png", "pos_x" : "495", "pos_y" : "40"},
+        {"file":"resources/two.png", "pos_x" : "635", "pos_y" : "40"}
+       ]
+  },
+
+
+   {
+      "name" : "frame_15",
+      "duration" : "00:00:01",  
+      "images": [
+        {"file":"resources/one.png", "pos_x" : "495", "pos_y" : "40"},
+        {"file":"resources/three.png", "pos_x" : "635", "pos_y" : "40"}
+       ]
+  },
+   
+  {
+      "name" : "frame_16",
+      "duration" : "00:00:01",  
+      "images": [
+        {"file":"resources/one.png", "pos_x" : "495", "pos_y" : "40"},
+        {"file":"resources/four.png", "pos_x" : "635", "pos_y" : "40"}
+       ]
+  },
+
+  {
+      "name" : "frame_17",
+      "duration" : "00:00:01",  
+      "images": [
+        {"file":"resources/one.png", "pos_x" : "495", "pos_y" : "40"},
+        {"file":"resources/five.png", "pos_x" : "635", "pos_y" : "40"}
+       ]
+  }
+]

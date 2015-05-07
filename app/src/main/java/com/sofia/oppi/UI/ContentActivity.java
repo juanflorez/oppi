@@ -3,7 +3,6 @@ package com.sofia.oppi.UI;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.sofia.oppi.R;
 import com.sofia.oppi.animationengine.AnimationEngine;
@@ -93,10 +91,14 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      * @param packageID the packageId, which is shown to the user
      */
     public void prepareContent( long packageID ){
+        /*
+         TODO: create an AsyncTask to prepare this content taking the root directory
+         from the Installed Modules data base
+        */
         ContentPackage currentPackage = PackagePool.getInstance().getContent( packageID );
         // TODO: later chapter paging
         Chapter firstChapter = currentPackage.getChapter( 0 );
-        Scene firstScene = firstChapter.getItem( 0 );
+        Scene firstScene = firstChapter.getContentSceneAt(0);
 
         if( firstScene == null ){
             // PROBLEM!!! THROW EXCEPTION?? TODO: how to handle error situations...
@@ -244,7 +246,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         int nextSceneIndex = mCurrentSceneInd+1;
         ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
         Chapter firstChapter = currentPackage.getChapter( 0 );
-        return firstChapter.getItem( nextSceneIndex );
+        return firstChapter.getContentSceneAt(nextSceneIndex);
     }
     /**
      * Returns the previous scene, does not update the current scene accounting.
@@ -257,7 +259,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
             int previousSceneIndex = mCurrentSceneInd-1;
             ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
             Chapter firstChapter = currentPackage.getChapter( 0 );
-            previousScene = firstChapter.getItem( previousSceneIndex );
+            previousScene = firstChapter.getContentSceneAt(previousSceneIndex);
         }
         return previousScene;
     }
@@ -266,14 +268,14 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
     public Scene getStartScene() {
         ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
         Chapter firstChapter = currentPackage.getChapter( 0 );
-        Scene firstScene = firstChapter.getItem( 0 );
+        Scene firstScene = firstChapter.getContentSceneAt(0);
         return firstScene;
     }
     // TODO: will we have "END SCENE"
     public Scene getEndScene(){
         ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
         Chapter firstChapter = currentPackage.getChapter( 0 );
-        ArrayList<ContentScene> items = firstChapter.getAllItems();
+        ArrayList<ContentScene> items = firstChapter.getAllScenes();
         Scene lastScene = items.get( items.size()-1 );
         return lastScene;
     }

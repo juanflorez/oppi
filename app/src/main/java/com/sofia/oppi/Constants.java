@@ -13,4 +13,5 @@ public abstract class Constants {
             "6wiOUzng&lib=MH3ePw12LiTFTCVhkigIlLpRi433oX1tn";
 
     public static final String HOME_DIR = "/Sofia/";
+    public static final String CONTENT_FILE = "/content.json";
 }
