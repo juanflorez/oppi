@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -205,6 +206,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         //if this is first time
         if( mStartTime == 0l ){
             mStartTime = System.nanoTime();
+            Log.i(TAG, " New Scene Started at : "+ mStartTime);
         }
         long deltaTime =(System.nanoTime()-mStartTime) / 1000000000;
 
@@ -215,6 +217,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
             // if scene is done!
             if( (mTotalTime + deltaTime) >= sceneStartTime ){
                 // change Scene
+                Log.i(TAG, " New Scene: "+ nextScene.getJsonFile());
                 mCurrentSceneInd++;
                 mCurrentScene = nextScene;
                 mCurrentScene.resume( this );

@@ -13,14 +13,10 @@ public class FrameImage extends ModuleElement{
 
     final static String TAG = "FrameImage";
 
+    @SerializedName("pos_y")
+    private int mYPos=0;
 
     @SerializedName("pos_x")
-    private String mPos_x;
-
-    @SerializedName("pos_y")
-    private String mPos_y;
-
-    private int mYPos=0;
     private int mXPos=0;
 
     @SerializedName("file")
@@ -36,32 +32,9 @@ public class FrameImage extends ModuleElement{
     }
 
 
-    public void setmPos_Y (String pos_y){
-        this.mPos_y = pos_y;
-        try {
-            this.mYPos = Integer.parseInt(pos_y);
-        } catch (NumberFormatException n) {
-            this.mYPos = 0;
-            Log.d(TAG,  n.getMessage());
-        }
-    }
 
-        public void setmPos_X (String pos_x){
 
-            this.mPos_x = pos_x;
 
-            try {
-
-                this.mXPos = Integer.parseInt(pos_x);
-
-            } catch (NumberFormatException n) {
-
-                this.mXPos = 0;
-                Log.d(TAG,  n.getMessage());
-
-            }
-
-        }
 
     public void setYPos( int YPos ) {
         this.mYPos = YPos;
@@ -95,11 +68,9 @@ public class FrameImage extends ModuleElement{
     @Override
     public String toString() {
         return "FrameImage{" +
-                ", mPos_x='" + mPos_x + '\'' +
-                ", mPos_y='" + mPos_y + '\'' +
-                ", mYPos=" + mYPos +
-                ", mXPos=" + mXPos +
-                ", mBitmapName='" + mBitmapName + '\'' +
+                 ", mYPos=" + mYPos +
+                 ", mXPos=" + mXPos +
+                 ", mBitmapName='" + mBitmapName + '\'' +
                 '}';
     }
 }

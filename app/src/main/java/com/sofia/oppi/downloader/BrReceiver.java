@@ -42,7 +42,7 @@ public class BrReceiver extends BroadcastReceiver{
 
     }
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public synchronized void onReceive(Context context, Intent intent) {
              //mContext = context;
             Log.v(TAG, "Triggered On Receive" );
             DownloadManager dm = (DownloadManager) context.getSystemService(Activity.DOWNLOAD_SERVICE);
@@ -90,11 +90,14 @@ public class BrReceiver extends BroadcastReceiver{
 
                         }
                     }
+                    c.close();
                     removeDownloadingRecord(downloadID);
                     cursor.moveToNext();
 
                 }
+                cursor.close();
             }
+            closeDb();
         }
 
 
@@ -133,6 +136,11 @@ public class BrReceiver extends BroadcastReceiver{
                 Constants.HOME_DIR;
         // TODO Delete zip file after successful extraction
         return UnZipper.unpackZip(path, zipFile, destination);
+
+    }
+
+    private void closeDb(){
+        dbHelper.close();
 
     }
 

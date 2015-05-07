@@ -188,6 +188,46 @@ public class ContentPackage extends ModuleElement{
         return builder.toString();
     }
 
+
+    /**
+     *
+     * @return a String array with the paths of all the images for the package
+     */
+
+    public ArrayList<String> getImagesPaths(){
+        ArrayList<String> paths = new ArrayList<String>();
+        // get the backgrounds and the images of each frame in each scene
+        for(int i=0; i<chaptersObj.size();i++){
+            Chapter tmpChapter = chaptersObj.get(i);
+
+            for(int j=0; j<tmpChapter.getAllScenes().size(); j++){
+                ContentScene tmpScene = tmpChapter.getContentSceneAt(j);
+                paths.add(tmpScene.getBitmapName());
+
+                for(int k=0; k<tmpScene.getFrames().size();k++){
+                    ArrayList<Frame> tmpFramesList = tmpScene.getFrames();
+
+                    for(int l=0; l<tmpFramesList.size(); l++){
+                        Frame tmpFrame = tmpFramesList.get(l);
+                        ArrayList<FrameImage> tmpImageArray = tmpFrame.getImages();
+
+                        for(int m=0; m<tmpImageArray.size(); m++){
+                            FrameImage tmpImage = tmpImageArray.get(m);
+                            String tmpBitmpPath = tmpImage.getBitmapName();
+                            paths.add(tmpBitmpPath);
+                        }
+
+                    }
+
+
+                }
+            }
+
+        }
+
+        return  paths;
+    }
+
     static class Desktop {
         private String SmallIcon="";
         private String MediumIcon="";

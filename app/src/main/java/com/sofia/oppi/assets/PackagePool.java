@@ -32,6 +32,7 @@ public class PackagePool {
             mContents = new HashMap<Long, ContentPackage>();
         }
         mContents.put( content.getPackageID(), content );
+
     }
 
     public ContentPackage getContent( long packageID ) {

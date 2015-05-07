@@ -17,6 +17,7 @@ import com.sofia.oppi.R;
 import com.sofia.oppi.UI.adapters.LocalModulesAdapter;
 import com.sofia.oppi.animationengine.ContentPackage;
 import com.sofia.oppi.animationengine.ModuleGsonParser;
+import com.sofia.oppi.assets.BitmapPool;
 import com.sofia.oppi.assets.PackagePool;
 
 
@@ -78,6 +79,7 @@ public class InstalledModulesFragment extends Fragment {
                         e.printStackTrace();
                    }
                 PackagePool.getInstance().addContent(contentPackage);
+                BitmapPool.getInstance().loadImages(getActivity(), contentPackage.getImagesPaths());
                 startActivity(intent); // calls pause for this activity!
             }
 

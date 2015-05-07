@@ -34,17 +34,7 @@ public class ContentScene extends Scene {
     private AnimationEngine mAnimationEngine=null;
     private float mStartTime=0.0f;
 
-    public ContentScene(String jsonFile, String startTime, String background, String height, String width ) {
-        super();
-        mJsonFile = jsonFile;
-        String[] times = startTime.split( ":", 3);
-        mSceneAudioMarkTime= parseInt(times[2]) + parseInt(times[1])*60 + parseInt(times[0])*3600;
 
-        // TODO; now contains path /resources/nama.png, get JUST the name. CHANGE THIS....LATER
-        mBackground = background.substring( (background.lastIndexOf( "/") + 1), background.lastIndexOf(".") );
-        mScreenHeight = Integer.parseInt( height );
-        mScreenWidth = Integer.parseInt( width );
-    }
 
     public String getJsonFile() {
         return mJsonFile;

@@ -108,7 +108,8 @@ public class LocalModulesAdapter extends ArrayAdapter<LocalModuleRecord> {
             arrayList.add(tmp);
 
         }
-
+        cursor.close();
+        db.close();
         swapRecords(arrayList);
 
     }

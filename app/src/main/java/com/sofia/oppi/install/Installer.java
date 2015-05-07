@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.sofia.oppi.Constants;
 import com.sofia.oppi.animationengine.ContentPackage;
-import com.sofia.oppi.animationengine.JSONPackageParser;
+
 import com.sofia.oppi.animationengine.ModuleGsonParser;
 import com.sofia.oppi.dbUtils.DbModules;
 import com.sofia.oppi.dbUtils.InstalledModulesHelper;
@@ -59,7 +59,7 @@ public class Installer {
 *   If the module exists in the db, and moduleOk, do nothing
 */
 //TODO: If the module exists, replace it.
-   public int registerPackage (ContentPackage modulePackage, String uri ) {
+   public   int  registerPackage (ContentPackage modulePackage, String uri ) {
 
        SQLiteDatabase db = dbHelper.getWritableDatabase();
        db.execSQL(DbModules.CREATE_MODULES_TABLE);
@@ -85,14 +85,16 @@ public class Installer {
                    null,
                    values);
            Log.i("Item added to db", modulePackage.getName() + " " + newRowId);
+           db.close();
            return 1;
        } else {
            Log.e("FAILED to add Item " + modulePackage.getPackageID() + " to db", modulePackage.getName());
+           db.close();
            return 0;
        }
    }
 
-    private boolean checkForInstallModule(ContentPackage modulePackage) {
+    private  boolean checkForInstallModule(ContentPackage modulePackage) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String[] projection = {
@@ -116,10 +118,13 @@ public class Installer {
         if ( cursor.getCount() > 0)
         {
             Log.i(TAG,"The item exists in the DB");
+            cursor.close();
             return true;
         }
         Log.i(TAG,"The item " + modulePackage.getPackageID().toString() + " exists in the DB");
         // TODO check if the module is OK
+        cursor.close();
+
         return false;
 
     }
@@ -128,11 +133,12 @@ public class Installer {
     public void deleteDatabase(){
         SQLiteDatabase db= dbHelper.getWritableDatabase();
         db.execSQL(DbModules.DELETE_MODULES_TABLE);
+        db.close();
 
 
     }
 
-    public void registerDirectory(String uri) {
+    public synchronized void registerDirectory(String uri) {
 
 
         //TODO get the JSON package from the uri/content.json
