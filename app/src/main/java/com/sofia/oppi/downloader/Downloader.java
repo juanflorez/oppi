@@ -112,6 +112,7 @@ public class Downloader  {
                 DbModules.OnGoingDownloads.TABLE_NAME,
                 null,
                 values);
+        db.close();
         Log.i(TAG, "Download "+ queue + " from " + url);
 
     }

@@ -1,9 +1,11 @@
 package com.sofia.oppi.animationengine;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.sofia.oppi.assets.BitmapPool;
 
@@ -11,6 +13,7 @@ import com.sofia.oppi.assets.BitmapPool;
  *
  */
 public class OPPIGraphics implements Graphics {
+    private static final String TAG = "OPPIGraphics";
     // for drawing on the mutable bitmap (mFrameBuffer)
     Canvas mCanvas=null;
     // Mutable bitmap, which is updated on the basis of current Chapter/Scene. Actual drawing of the bitmap
@@ -38,7 +41,7 @@ public class OPPIGraphics implements Graphics {
      */
     @Override
     public void drawBitmap( String bitmapName, int x, int y ) {
-        Bitmap bitmap = mBitmapPool.getBitmap( bitmapName );
+        Bitmap bitmap = mBitmapPool.getBitmap(bitmapName);
 
         if( bitmap != null ){
             float top = y;
@@ -46,7 +49,13 @@ public class OPPIGraphics implements Graphics {
             float right = left + bitmap.getWidth();
             float bottom = top + bitmap.getHeight();
             RectF rect = new RectF(left,top,right,bottom);
+            /*
+            Uncomment for testing without position
+             */
+        //  RectF rect = new RectF(0,0,  mFrameBuffer.getWidth(), mFrameBuffer.getHeight());
             mCanvas.drawBitmap( bitmap, null, rect, null );
+        }else{
+          Log.e(TAG, "Bitmap: " + bitmapName + " Not found at drawBitmap");
         }
     }
 
@@ -56,10 +65,12 @@ public class OPPIGraphics implements Graphics {
      */
     @Override
     public void drawBackground( String bitmapName ) {
-        Bitmap bitmap = mBitmapPool.getBitmap( bitmapName );
+         Bitmap bitmap = mBitmapPool.getBitmap( bitmapName );
         if( bitmap != null ){
             Rect frameRect = new Rect( 0,0, mFrameBuffer.getWidth(), mFrameBuffer.getHeight() );
             mCanvas.drawBitmap( bitmap,  null, frameRect,null );
+        }else {
+            Log.e(TAG, "Bitmap: " + bitmapName + "Not found");
         }
 
     }

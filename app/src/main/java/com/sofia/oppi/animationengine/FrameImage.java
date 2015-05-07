@@ -1,15 +1,28 @@
 package com.sofia.oppi.animationengine;
 
 import android.graphics.Bitmap;
+import android.util.Log;
+
+import com.google.gson.annotations.SerializedName;
+
 
 /**
- *
+ * It maps to the elements in the image array in each Frame in in scene.json(s)
  */
-public class FrameImage {
+public class FrameImage extends ModuleElement{
+
+    final static String TAG = "FrameImage";
+
+    @SerializedName("pos_y")
     private int mYPos=0;
+
+    @SerializedName("pos_x")
     private int mXPos=0;
+
+    @SerializedName("file")
     private String mBitmapName="";
-    private Bitmap mBitmap=null;
+
+
 
     public FrameImage(String bitmapName, int positionX, int positionY){
         mYPos = positionY;
@@ -18,21 +31,24 @@ public class FrameImage {
         mBitmapName = bitmapName.substring( (bitmapName.lastIndexOf( "/") + 1), bitmapName.lastIndexOf(".") );
     }
 
+
+
+
+
+
     public void setYPos( int YPos ) {
         this.mYPos = YPos;
     }
+
+
+
 
     public void setXPos( int XPos ) {
         this.mXPos = XPos;
     }
 
-    public void setBitmapName( String BitmapName ) {
-        this.mBitmapName = BitmapName;
-    }
 
-    public void setBitmap(Bitmap Bitmap) {
-        this.mBitmap = Bitmap;
-    }
+
     public int getYPos() {
         return mYPos;
     }
@@ -42,10 +58,19 @@ public class FrameImage {
     }
 
     public String getBitmapName() {
-        return mBitmapName;
+        Log.d("FRAME IMAGE: ",root+mBitmapName);
+        return root+mBitmapName;
     }
 
-    public Bitmap getBitmap() {
-        return mBitmap;
+    public void setRoot(String path){ root = path;}
+
+    public String getRoot() {return root;}
+    @Override
+    public String toString() {
+        return "FrameImage{" +
+                 ", mYPos=" + mYPos +
+                 ", mXPos=" + mXPos +
+                 ", mBitmapName='" + mBitmapName + '\'' +
+                '}';
     }
 }

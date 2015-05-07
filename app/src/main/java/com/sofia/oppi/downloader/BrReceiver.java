@@ -41,7 +41,7 @@ public class BrReceiver extends BroadcastReceiver{
 
     }
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public synchronized void onReceive(Context context, Intent intent) {
              //mContext = context;
             Log.v(TAG, "Triggered On Receive" );
             DownloadManager dm = (DownloadManager) context.getSystemService(Activity.DOWNLOAD_SERVICE);
@@ -88,11 +88,14 @@ public class BrReceiver extends BroadcastReceiver{
 
                         }
                     }
+                    c.close();
                     removeDownloadingRecord(downloadID);
                     cursor.moveToNext();
 
                 }
+                cursor.close();
             }
+            closeDb();
         }
 
     private Cursor queryModuleDownloads() {
@@ -126,6 +129,11 @@ public class BrReceiver extends BroadcastReceiver{
         }
         //TODO Delete the zip file after it has been expanded.
         return "";
+    }
+
+    private void closeDb(){
+        dbHelper.close();
+
     }
 
 }
