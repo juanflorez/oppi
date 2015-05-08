@@ -36,7 +36,11 @@ public class Frame extends ModuleElement{
     }
 
     public int getDuration(){
-        // TODO: parse String in format 00:00:00 to seconds....
+        try {
+            return ModuleGsonParser.getMilliSeconds(mDuration)/1000;
+        } catch (Exception e) {
+            e.printStackTrace();
+       }
         return 1;
     }
 

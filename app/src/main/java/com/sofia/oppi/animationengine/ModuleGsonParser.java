@@ -74,5 +74,32 @@ public class ModuleGsonParser {
         return thePackage;
 
     }
+    //TODO Especific Exception for this case
+
+    public static int getMilliSeconds(String duration)throws Exception {
+        String times[] = duration.split(":",3);
+        int result = 14000;
+        if (times.length != 3){
+            Exception ex = new Exception("The format for time is incorrect: " + duration);
+            throw ex;
+        }
+
+        int hours = Integer.parseInt(times[0]);
+        int minutes = Integer.parseInt(times[1]);
+        int seconds = Integer.parseInt(times[2]);
+
+
+        try {
+
+            result = seconds * 1000 +
+                    minutes * 1000 * 60 +
+                    hours * 1000 * 60 * 60;
+
+        }catch (Exception e) {
+            throw e;
+        }
+
+            return result;
+    }
 
 }

@@ -40,6 +40,8 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
     private OPPIGraphics mGraphics=null;
     private long mStartTime=0l;
     private long mTotalTime=0l;
+    private long mChapterStartTime=0l;
+    private Chapter mCurrentChapter;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -98,6 +100,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         ContentPackage currentPackage = PackagePool.getInstance().getContent( packageID );
         // TODO: later chapter paging
         Chapter firstChapter = currentPackage.getChapter( 0 );
+        mCurrentChapter = currentPackage.getChapter(0);
         Scene firstScene = firstChapter.getContentSceneAt(0);
 
         if( firstScene == null ){
@@ -125,8 +128,8 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
     public void onPrepared( MediaPlayer mediaPlayer ){
 
         mAnimationSurface.startScene();
-
-        //ContentAudioPlayer.getInstance().playAudio( mAudioFile, getApplicationContext());
+        ContentAudioPlayer.getInstance().playAudio( mAudioFile, getApplicationContext());
+        mChapterStartTime = System.nanoTime();
     }
 
 
@@ -194,6 +197,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      */
     public void onChapterEnd() {
         mAnimationSurface.stopScene();
+        ContentAudioPlayer.getInstance().release();
     }
     /**
      * The core of the animationEngine logic. Calculates the scene, which suppose to be present at the moment.
@@ -203,50 +207,65 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      */
     @Override
     public Scene getCurrentScene() {
+        //current playback time Milliseconds
+        int elapsedMilliSeconds = ContentAudioPlayer.getInstance().getCurrentPosition();
+        long elapsedNanoSeconds = elapsedMilliSeconds * 1000000;
         //if this is first time
         if( mStartTime == 0l ){
             mStartTime = System.nanoTime();
-            Log.i(TAG, " New Scene Started at : "+ mStartTime);
+            Log.i(TAG, " New Scene Started at : "+ mStartTime/1000000000);
         }
+
         long deltaTime =(System.nanoTime()-mStartTime) / 1000000000;
 
         // get next scene and its startTime
         ContentScene nextScene = (ContentScene)this.getNextScene();
-        if( nextScene != null ){
+        //ContentScene nextScene = mCurrentChapter.getContentSceneAt(mCurrentSceneInd+1);
+
+        if( nextScene != null ) { //TODO return a marker with "END SCENE"
             long sceneStartTime = nextScene.getStartTime();
             // if scene is done!
-            if( (mTotalTime + deltaTime) >= sceneStartTime ){
+            if (elapsedMilliSeconds >= sceneStartTime) {
                 // change Scene
-                Log.i(TAG, " New Scene: "+ nextScene.getJsonFile());
+                Log.i(TAG, " New Scene: " + nextScene.getJsonFile());
                 mCurrentSceneInd++;
                 mCurrentScene = nextScene;
-                mCurrentScene.resume( this );
+                mCurrentScene.resume(this);
                 mTotalTime += deltaTime;
                 mStartTime = 0l;
             }
         }else{
+            Log.i(TAG, "NO MORE SCENES");
+            // COMMENTED BECAUSE THE TOTAL TIME IS NOT TRUSTWORTHY
             // this is last scene in this chapter
             // check if the scene chapter is over
-            ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
-            long chapterDuration = currentPackage.getDuration();
-            if( (mTotalTime + deltaTime) >= chapterDuration ){
-                // YES -> GET "Last scene" or return to menu?
-                this.onChapterEnd();
+  //          ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
+  //          long chapterDuration = currentPackage.getDuration();
+  //          if( (mTotalTime + deltaTime) >= chapterDuration ){
+  //              // YES -> GET "Last scene" or return to menu?
+                if (!ContentAudioPlayer.getInstance().isPlaying()){
+                     this.onChapterEnd();
+                }
             }
-        }
+
         return mCurrentScene;
     }
+
+
+
+
     /**
      * Returns the next scene, does not update the current scene accounting.
-     *
+     * TODO: This is static data, so it should be "easy" to ask: Which scene should be
+     * playing at (x Time)?
      * @return next Scene, null if last scene
      */
     private Scene getNextScene(){
         Scene nextScene=null;
         int nextSceneIndex = mCurrentSceneInd+1;
         ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
-        Chapter firstChapter = currentPackage.getChapter( 0 );
-        return firstChapter.getContentSceneAt(nextSceneIndex);
+        Chapter currentChapter = currentPackage.getChapter( 0 ); //TODO: GET Current Chapter
+        return currentChapter.getContentSceneAt(nextSceneIndex);
     }
     /**
      * Returns the previous scene, does not update the current scene accounting.

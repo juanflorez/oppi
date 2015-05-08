@@ -1,6 +1,7 @@
 package com.sofia.oppi.animationengine;
 
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,6 +14,7 @@ import static java.lang.Integer.parseInt;
  * It maps to scene descriptor in Chapter.json
  */
 public class ContentScene extends Scene {
+    private static final String TAG = "CONT_SCENE";
     @SerializedName("SceneFile")
     private String mJsonFile="";
 
@@ -24,6 +26,9 @@ public class ContentScene extends Scene {
 
     @SerializedName("screenWidth")
     private int mScreenWidth;
+
+    @SerializedName("StartTime")
+    private String mStartTimeString;
 
     private Rect mDestRect;
 
@@ -40,8 +45,20 @@ public class ContentScene extends Scene {
         return mJsonFile;
     }
 
+    /**The amount of milliseconds after this scene should start
+     * Assumes a well formed string "HH:MM:SS" which is
+     * reinforced at parse time. (TODO)
+     * */
+
     public int getStartTime() {
-        return mSceneAudioMarkTime;
+        int result=-1;
+        try {
+            result = ModuleGsonParser.getMilliSeconds(mStartTimeString);
+        } catch (Exception e) {
+            Log.e(TAG, "Wrong start time "+ mStartTimeString);
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public String getBitmapName(){
@@ -102,6 +119,7 @@ public class ContentScene extends Scene {
                 for( int i=0; i < images.size(); i++ ){
                     FrameImage image = images.get( i );
                     mAnimationEngine.getGraphics().drawBitmap( image.getBitmapName(), image.getXPos(), image.getYPos() );
+                    Log.i(TAG, "DRAW Image: "+image.getBitmapName() + "in FRAME "+mFrames.get(mCurrentFrame).getmName());
                 }
             }
             mPresentedFrame=mCurrentFrame;

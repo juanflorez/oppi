@@ -58,7 +58,7 @@ public class FrameImage extends ModuleElement{
     }
 
     public String getBitmapName() {
-        Log.d("FRAME IMAGE: ",root+mBitmapName);
+
         return root+mBitmapName;
     }
 

@@ -3,14 +3,18 @@ package com.sofia.oppi.assets;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.net.Uri;
 
-import com.sofia.oppi.R;
+
+
+import java.io.IOException;
 
 /**
  */
 public class ContentAudioPlayer {
     private static ContentAudioPlayer instance;
     private MediaPlayer mPlayer=null;
+
 
     private ContentAudioPlayer(){
     }
@@ -22,20 +26,22 @@ public class ContentAudioPlayer {
         return instance;
     }
 
-    public void prepareAudio( String uri ){
-/*        Uri fileUri = Uri.parse( uri );
+    private void prepareAudio( Context context, String uri ){
+
+      Uri fileUri = Uri.parse( uri );
+      mPlayer = new MediaPlayer();
 
         try{
-            mPlayer.setDataSource( appContext, fileUri);
-        }catch( IllegalArgumentException e ){
+            mPlayer.setDataSource(context, fileUri);
+        }catch( IOException e ){
             e.printStackTrace();
-        }*/
+        }
 
 
     }
 
     public void playAudio( String audioName, Context context ){
-        mPlayer = MediaPlayer.create( context, R.raw.numbers );
+        mPlayer = MediaPlayer.create(context, Uri.parse(audioName) );
         mPlayer.start();
     }
 
@@ -78,6 +84,14 @@ public class ContentAudioPlayer {
     public void seekToPosition( int audioPosition ){
         if( mPlayer != null ){
             mPlayer.seekTo( audioPosition );
+        }
+    }
+
+    public void release(){
+
+        if(mPlayer!=null) {
+            mPlayer.release();
+            mPlayer = null;
         }
     }
 }
