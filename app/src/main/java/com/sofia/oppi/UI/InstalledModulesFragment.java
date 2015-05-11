@@ -1,7 +1,10 @@
 package com.sofia.oppi.UI;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -25,7 +28,9 @@ public class InstalledModulesFragment extends Fragment {
 
 
     public final String TAG = "InstalledModulesFragment";
+    public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
     private OnFragmentInteractionListener mListener;
+    private ProgressDialog mProgressDialog;
 
     /**
      * The fragment's ListView/GridView.
@@ -62,16 +67,16 @@ public class InstalledModulesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Toast.makeText(getActivity(), "You Clicked at " +
-                        mAdapter.getItem(position).getModuleName(), Toast.LENGTH_SHORT).show();
 
                 // TODO: add one button here to start the new activity for testing purposes
                 // LATER USER SELECTS THE PACKAGE SHE WANTS TO SEE FROM THE LIST.
-                Intent intent  = new Intent( getActivity(), ContentActivity.class );
+
                 long tmpID = mAdapter.getItem(position).getLongID();
+                String stringID = Long.toString(tmpID);
                 String tmpRoot = mAdapter.getItem(position).getRoot();
-                intent.putExtra( "PACKAGE_ID", tmpID );
-                intent.putExtra("PACKAGE_ROOT", tmpRoot);
+
+                new LoadPackageAsync().execute(stringID,tmpRoot);
+
                 ContentPackage contentPackage = new ContentPackage();
                 try{
                    contentPackage = ModuleGsonParser.getContentPackage(tmpRoot);
@@ -80,12 +85,27 @@ public class InstalledModulesFragment extends Fragment {
                    }
                 PackagePool.getInstance().addContent(contentPackage);
                 BitmapPool.getInstance().loadImages(getActivity(), contentPackage.getImagesPaths());
-                startActivity(intent); // calls pause for this activity!
+
             }
 
         });
 
 
+    }
+
+
+    protected Dialog showDialog(int id) {
+        switch (id) {
+            case DIALOG_DOWNLOAD_PROGRESS:
+                mProgressDialog = new ProgressDialog(getActivity());
+                mProgressDialog.setMessage("Loading module ...");
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+                return mProgressDialog;
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -152,6 +172,46 @@ public class InstalledModulesFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+
+    class LoadPackageAsync extends AsyncTask<String,String,String>{
+
+        Intent intent;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            showDialog(DIALOG_DOWNLOAD_PROGRESS);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            // TODO: add one button here to start the new activity for testing purposes
+            // LATER USER SELECTS THE PACKAGE SHE WANTS TO SEE FROM THE LIST.
+            intent  = new Intent( getActivity(), ContentActivity.class );
+            intent.putExtra( "PACKAGE_ID", Long.valueOf(params[0]) );
+            intent.putExtra("PACKAGE_ROOT", params[1]);
+            ContentPackage contentPackage = new ContentPackage();
+            try{
+                contentPackage = ModuleGsonParser.getContentPackage(params[1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            PackagePool.getInstance().addContent(contentPackage);
+            BitmapPool.getInstance().loadImages(getActivity(), contentPackage.getImagesPaths());
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String unused) {
+          mProgressDialog.setProgress(100);
+          mProgressDialog.dismiss();
+          startActivity(intent); // calls pause for this activity!
+        }
     }
 
 }

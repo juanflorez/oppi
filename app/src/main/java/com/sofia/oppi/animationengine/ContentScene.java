@@ -119,7 +119,7 @@ public class ContentScene extends Scene {
                 for( int i=0; i < images.size(); i++ ){
                     FrameImage image = images.get( i );
                     mAnimationEngine.getGraphics().drawBitmap( image.getBitmapName(), image.getXPos(), image.getYPos() );
-                    Log.i(TAG, "DRAW Image: "+image.getBitmapName() + "in FRAME "+mFrames.get(mCurrentFrame).getmName());
+                    Log.d(TAG, "DRAW Image: "+image.getBitmapName() + "in FRAME "+mFrames.get(mCurrentFrame).getmName());
                 }
             }
             mPresentedFrame=mCurrentFrame;

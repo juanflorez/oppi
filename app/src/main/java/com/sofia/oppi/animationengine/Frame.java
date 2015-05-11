@@ -35,6 +35,10 @@ public class Frame extends ModuleElement{
         this.mName = mName;
     }
 
+    /**
+     *
+     * @return Duration in seconds
+     */
     public int getDuration(){
         try {
             return ModuleGsonParser.getMilliSeconds(mDuration)/1000;
