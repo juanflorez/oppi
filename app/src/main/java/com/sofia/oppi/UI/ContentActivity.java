@@ -78,12 +78,12 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
             }
         });
         Button stop = (Button)findViewById( R.id.stopButton );
-        /*stop.setOnClickListener( new View.OnClickListener(){
+        stop.setOnClickListener( new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 onStop();
             }
-        });*/
+        });
     }
 
     /**
@@ -140,7 +140,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      */
     @Override
     public void onBackWind() {
-
+     //TODO It should restart the scene first time. Second should go to previous
         int audioMarkTime=0;
         // check if this is the first one
         ContentScene prevScene = (ContentScene)this.getPreviousScene();
@@ -155,15 +155,18 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
            mCurrentScene = prevScene;
         }
         // TODO: perhaps we need to set OnSeekCompleteListener, and "pause" scene running until onSeekComplete is called...
-        ContentAudioPlayer.getInstance().seekToPosition( (audioMarkTime*1000) );
+        ContentAudioPlayer.getInstance().seekToPosition( (audioMarkTime) );
         mStartTime = 0l;
         mTotalTime = audioMarkTime;
         mCurrentScene.resume( this );
     }
 
-/*    public void onStop() {
+     public void onStop() {
 
-    }*/
+         ContentAudioPlayer.getInstance().release();
+         super.onStop();
+         finish();
+    }
 
     /**
      * Method is called when user has pressed "NEXT" button -> go to next scene
@@ -179,13 +182,14 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
             // this is last, TODO: WHAT NEXT?
             ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
             // go to end
-            audioMarkTime = currentPackage.getDuration();
+
         }else{
             audioMarkTime = nextScene.getStartTime();
             mCurrentSceneInd++;
             mCurrentScene = nextScene;
+            ContentAudioPlayer.getInstance().seekToPosition( (audioMarkTime) );
         }
-        ContentAudioPlayer.getInstance().seekToPosition( (audioMarkTime*1000) );
+
         mStartTime = 0l;
         mTotalTime = audioMarkTime;
         mCurrentScene.resume( this );
@@ -198,6 +202,8 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
     public void onChapterEnd() {
         mAnimationSurface.stopScene();
         ContentAudioPlayer.getInstance().release();
+        BitmapPool.getInstance().flush();
+        finish();
     }
     /**
      * The core of the animationEngine logic. Calculates the scene, which suppose to be present at the moment.
@@ -235,7 +241,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
                 mStartTime = 0l;
             }
         }else{
-            Log.i(TAG, "NO MORE SCENES");
+            Log.d(TAG, "NO MORE SCENES");
             // COMMENTED BECAUSE THE TOTAL TIME IS NOT TRUSTWORTHY
             // this is last scene in this chapter
             // check if the scene chapter is over

@@ -15,7 +15,6 @@ public class ContentAudioPlayer {
     private static ContentAudioPlayer instance;
     private MediaPlayer mPlayer=null;
 
-
     private ContentAudioPlayer(){
     }
 
@@ -28,15 +27,14 @@ public class ContentAudioPlayer {
 
     private void prepareAudio( Context context, String uri ){
 
-      Uri fileUri = Uri.parse( uri );
-      mPlayer = new MediaPlayer();
+       Uri fileUri = Uri.parse( uri );
+       mPlayer = new MediaPlayer();
 
         try{
             mPlayer.setDataSource(context, fileUri);
         }catch( IOException e ){
             e.printStackTrace();
         }
-
 
     }
 
@@ -88,6 +86,9 @@ public class ContentAudioPlayer {
     }
 
     public void release(){
+        if(mPlayer!=null && mPlayer.isPlaying()){
+            mPlayer.stop();
+        }
 
         if(mPlayer!=null) {
             mPlayer.release();

@@ -81,15 +81,21 @@ public class Downloader  {
 
     public void downloadModule(String ModuleURL) {
         dm = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
+        try {
+            Request request = new Request(
+                    Uri.parse(ModuleURL));
+            request.setDestinationInExternalFilesDir(mContext, null, "lesson.zip");
 
-        Request request = new Request(
-                Uri.parse(ModuleURL));
-        request.setDestinationInExternalFilesDir(mContext, null, "lesson.zip");
+            createTable();
 
-        createTable();
+            //Add the request to the Download queue and to the database for the receiver.
+            addDownloadToDb(dm.enqueue(request), ModuleURL);
+        } catch (IllegalArgumentException il){
+            il.printStackTrace();
+            // the module is supposed to be correct. in case of failure, just do not download.
+            Log.e(TAG," WRONG URL: "+ ModuleURL);
 
-        //Add the request to the Download queue and to the database for the receiver.
-        addDownloadToDb(dm.enqueue(request),ModuleURL);
+        }
 
     }
 

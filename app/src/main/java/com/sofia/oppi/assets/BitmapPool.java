@@ -42,86 +42,16 @@ public class BitmapPool {
         return bitmap;
     }
 
-    public int getAdaptedCoordinate( int modelPos ){
-        // SHOULD KNOW THE TARGET REAL VIEW SIZE
-        // SHOULD KNOW THE MODEL VIEW SIZE
-        // SHOULD KNOW THE MODEL Y/X POS
-
-        // --->
-
-
-        //return modelPos/(modelScreenSize/targetScreenSize);
-        return 0;
-    }
 
     // TODO: background bitmaps should perhaps scaled, how about other bitmaps?
     // TODO: if we just "adapt" the given position to the real device?
     // static Bitmap createScaledBitmap( Bitmap src, int dstWidth, int dstHeight, boolean filter)
     // creates a new bitmap, scaled from an eisting bitmap when possible.
 
-    /*
-      DEBUG_CONFIG
-      THIS IS JUST FOR TESTING (to read image resources, later from server)
-     */
-    @Deprecated
-    public void loadImages( Context context ) {
-        // TODO: AsyncTask for loading all the images!
-        // TODO: cache bitmaps (disk cache)
-        // TODO: save bitmap for later use
-        Bitmap bitmap=null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        String resourceName=null;
-
-        //==== TODO: this must be done also in the "RELEASE_CONFIG":===
-        WindowManager windowManager = (WindowManager)context.getSystemService( Context.WINDOW_SERVICE );
-        DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getMetrics( metrics );
-        int realHeight = metrics.heightPixels;
-        int realWidth = metrics.widthPixels;
-        //==========================================
-
-        int[] imageResources = { R.drawable.advance, R.drawable.back, R.drawable.background1, R.drawable.background2,
-                R.drawable.background3, R.drawable.eight, R.drawable.five, R.drawable.four, R.drawable.nine,
-                R.drawable.one, R.drawable.quit, R.drawable.seven, R.drawable.six, R.drawable.three, R.drawable.two,
-                R.drawable.zero };
-
-        for( int i=0; i < imageResources.length; i++ ){
-
-            resourceName = context.getResources().getResourceEntryName( imageResources[i] );
-
-            options.inJustDecodeBounds = true;
-            // does not allocate yet memory, just for getting the image dimensions
-            BitmapFactory.decodeResource( context.getResources(), imageResources[i], options );
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            String imageType = options.outMimeType;
-            // TODO: check the original image size and check if that is ok, otherwise need to calculate new size for the image
-            //int size = calculateInSampleSize( options, width, heigth );
-
-
-
-            // finally allocate memory and load the image
-            options.inJustDecodeBounds = false;
-            bitmap = BitmapFactory.decodeResource( context.getResources(), imageResources[i], options );
-
-/*            Bitmap scaledBitmap = null;
-            if( resourceName.equalsIgnoreCase( "background1") ){
-                scaledBitmap = Bitmap.createScaledBitmap( bitmap, 480, 690, false );
-            }
-            if( scaledBitmap != null ){
-                mBitmapMap.put( resourceName, scaledBitmap );
-            }else{
-                mBitmapMap.put( resourceName, bitmap );
-            }*/
-            mBitmapMap.put( resourceName, bitmap );
-        }
-
-
-
-    }
 
     public void loadImages( Context context, ArrayList<String> imagePaths) {
-        // TODO: AsyncTask for loading all the images!
+        // TODO: AsyncTask for loading all the images! (this is called by load package in own
+        // thread.
         // TODO: cache bitmaps (disk cache)
         // TODO: save bitmap for later use
         Bitmap bitmap=null;
@@ -154,9 +84,9 @@ public class BitmapPool {
 
             // finally allocate memory and load the image
             options.inJustDecodeBounds = false;
-            //bitmap = BitmapFactory.decodeResource( context.getResources(), imageResources[i], options );
+            //TODO Uncomment to optimize by avoiding scaling when possible
             bitmap = BitmapFactory.decodeFile(resourceName, options);
-/*            Bitmap scaledBitmap = null;
+/*           Bitmap scaledBitmap = null;
             if( resourceName.equalsIgnoreCase( "background1") ){
                 scaledBitmap = Bitmap.createScaledBitmap( bitmap, 480, 690, false );
             }
@@ -169,6 +99,15 @@ public class BitmapPool {
         }
 
 
+
+    }
+
+    /** releases the memory
+     *
+     */
+    public void flush(){
+
+     mBitmapMap.clear();
 
     }
 }
