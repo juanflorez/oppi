@@ -5,6 +5,6 @@ package com.sofia.oppi.animationengine;
  *
  */
 public interface SceneObserver {
-    void onBackWind();
-    void onForwardWind();
+    int onBackWind();
+    int onForwardWind();
 }

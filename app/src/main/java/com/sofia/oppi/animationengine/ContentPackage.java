@@ -139,7 +139,7 @@ public class ContentPackage extends ModuleElement{
 
     public Chapter getChapter( int ind ){
         Chapter chapter=null;
-        if( chaptersObj != null && ind < chaptersObj.size()){
+        if( chaptersObj != null && ind < chaptersObj.size() && ind >= 0){
             chapter = chaptersObj.get( ind );
         }
         return chapter;

@@ -42,6 +42,10 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
     private long mTotalTime=0l;
     private long mChapterStartTime=0l;
     private Chapter mCurrentChapter;
+    private int     mCurrentChapterInd=0;
+    private int     mNextChapterInd = 0;
+    private Chapter mNextChapter;
+    private ContentPackage mCurrentPackage;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -60,7 +64,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         if( savedInstanceState == null ){
             Intent intent = getIntent();
             mPackageID = intent.getLongExtra("PACKAGE_ID", 0L);
-            this.prepareContent( mPackageID );
+            this.prepareContent( mPackageID, 0 );
         }
 
         Button back = (Button)findViewById( R.id.backButton );
@@ -91,26 +95,25 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      * This method assumes that package is valid: it has chapters and scenes and valid data.
      *
      * @param packageID the packageId, which is shown to the user
+     * @param chapterInd the chapter from which it will start
      */
-    public void prepareContent( long packageID ){
-        /*
-         TODO: create an AsyncTask to prepare this content taking the root directory
-         from the Installed Modules data base
-        */
-        ContentPackage currentPackage = PackagePool.getInstance().getContent( packageID );
-        // TODO: later chapter paging
-        Chapter firstChapter = currentPackage.getChapter( 0 );
-        mCurrentChapter = currentPackage.getChapter(0);
-        Scene firstScene = firstChapter.getContentSceneAt(0);
+    public void prepareContent( long packageID, int chapterInd ){
+
+        mCurrentPackage = PackagePool.getInstance().getContent( packageID );
+        mCurrentChapterInd = chapterInd;
+        mCurrentChapter = mCurrentPackage.getChapter(mCurrentChapterInd);
+        Scene firstScene = mCurrentChapter.getContentSceneAt(0);
 
         if( firstScene == null ){
+            // TODO: PackagePool guarantees no null
             // PROBLEM!!! THROW EXCEPTION?? TODO: how to handle error situations...
+            Log.e(TAG,"The first Scene in package "+ packageID +" is null");
+            this.finish();
         }
         mCurrentScene = firstScene;
-        mAudioFile = firstChapter.getAudioName();
-        // TODO: prepare audio
-
-        Bitmap framebuffer = Bitmap.createBitmap( ((ContentScene) firstScene).getSceneWidth(), ((ContentScene) firstScene).getSceneHeight(), Bitmap.Config.RGB_565 );
+        mAudioFile = mCurrentChapter.getAudioName();
+        Bitmap framebuffer = Bitmap.createBitmap( ((ContentScene) mCurrentScene).getSceneWidth(),
+                 ((ContentScene) mCurrentScene).getSceneHeight(), Bitmap.Config.RGB_565 );
         mAnimationSurface = new AnimationSurface( this, this, framebuffer );
         mGraphics = new OPPIGraphics( framebuffer, BitmapPool.getInstance() );
 
@@ -127,20 +130,57 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      */
     public void onPrepared( MediaPlayer mediaPlayer ){
 
-        mAnimationSurface.startScene();
-        ContentAudioPlayer.getInstance().playAudio( mAudioFile, getApplicationContext());
+        jumpToChapter(mNextChapterInd, 0);
         mChapterStartTime = System.nanoTime();
     }
 
+    /**
+     * set things up to start playing the next chapter
+     * It changes the mCurrentScene and starts the playback of following track
+     *
+     */
+    private void jumpToChapter(int chapterInd, int sceneInd) {
 
+        if( mCurrentPackage.getChapter(chapterInd) != null) {
+
+            mAnimationSurface.startScene();
+            mCurrentChapterInd = chapterInd;
+            mCurrentChapter = mCurrentPackage.getChapter(mCurrentChapterInd);
+            mCurrentSceneInd = sceneInd;
+            mCurrentScene = mCurrentChapter.getContentSceneAt(mCurrentSceneInd);
+            ContentScene contentScene = (ContentScene)mCurrentScene;
+            mNextChapterInd = mCurrentChapterInd + 1;
+            mNextChapter = mCurrentPackage.getChapter(mNextChapterInd);
+            ContentAudioPlayer.getInstance().release();
+            ContentAudioPlayer.getInstance().prepare(mCurrentChapter.getAudioName(), this, contentScene.getStartTime());
+            ContentAudioPlayer.getInstance().startPlaying();
+            mCurrentScene.resume(this);
+
+        }
+
+    }
     /**
      * Method is called when user has pressed "BACK" button -> go to the previous scene
-     * If this was first scene, DO nothing?
+     * If this was first scene, start again
      *
      */
     @Override
-    public void onBackWind() {
-     //TODO It should restart the scene first time. Second should go to previous
+    public int onBackWind() {
+     // if current scene is 0, go to previous chapter
+        if (mCurrentSceneInd == 0){
+            Chapter chapter = mCurrentPackage.getChapter(mCurrentChapterInd-1);
+            if (chapter != null){
+                int lastScene = chapter.getAllScenes().size()-1;
+                jumpToChapter(mCurrentChapterInd-1,lastScene);
+                return mCurrentSceneInd;
+            } else { // we are at the begining of the package
+
+                jumpToChapter(0,0);
+                return mCurrentSceneInd;
+
+            }
+
+        }
         int audioMarkTime=0;
         // check if this is the first one
         ContentScene prevScene = (ContentScene)this.getPreviousScene();
@@ -159,6 +199,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         mStartTime = 0l;
         mTotalTime = audioMarkTime;
         mCurrentScene.resume( this );
+        return mCurrentSceneInd;
     }
 
      public void onStop() {
@@ -170,19 +211,19 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
 
     /**
      * Method is called when user has pressed "NEXT" button -> go to next scene
-     * If this was last scene, the go to "LAST SCENE" -> user is able to restart chapter or go to menu
+     * If this was last scene, go to next chapter. or do nothing if it is the final one
+     * @return currentSceneInd
      *
      */
     @Override
-    public void onForwardWind() {
+    public int onForwardWind() {
         int audioMarkTime=0;
         // check if this is the first one
         ContentScene nextScene = (ContentScene)this.getNextScene();
         if( nextScene == null ){
-            // this is last, TODO: WHAT NEXT?
-            ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
-            // go to end
-
+            // this is last from this chapter.
+            jumpToChapter(mNextChapterInd,0);
+            return mCurrentSceneInd;
         }else{
             audioMarkTime = nextScene.getStartTime();
             mCurrentSceneInd++;
@@ -193,13 +234,14 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
         mStartTime = 0l;
         mTotalTime = audioMarkTime;
         mCurrentScene.resume( this );
+        return mCurrentSceneInd;
     }
     /**
      * Called when the whole chapter has been viewed.
      *
      *
      */
-    public void onChapterEnd() {
+    public void onModuleEnd() {
         mAnimationSurface.stopScene();
         ContentAudioPlayer.getInstance().release();
         BitmapPool.getInstance().flush();
@@ -209,13 +251,12 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      * The core of the animationEngine logic. Calculates the scene, which suppose to be present at the moment.
      * TODO? Checks the chapter ends and audio synchronization.
      *
-     * @return Scene current scene
+     * @return Scene current scene, or tirggers moduleEnd if the playback ends.
      */
     @Override
     public Scene getCurrentScene() {
         //current playback time Milliseconds
         int elapsedMilliSeconds = ContentAudioPlayer.getInstance().getCurrentPosition();
-        long elapsedNanoSeconds = elapsedMilliSeconds * 1000000;
         //if this is first time
         if( mStartTime == 0l ){
             mStartTime = System.nanoTime();
@@ -226,7 +267,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
 
         // get next scene and its startTime
         ContentScene nextScene = (ContentScene)this.getNextScene();
-        //ContentScene nextScene = mCurrentChapter.getContentSceneAt(mCurrentSceneInd+1);
+
 
         if( nextScene != null ) { //TODO return a marker with "END SCENE"
             long sceneStartTime = nextScene.getStartTime();
@@ -241,19 +282,31 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
                 mStartTime = 0l;
             }
         }else{
-            Log.d(TAG, "NO MORE SCENES");
-            // COMMENTED BECAUSE THE TOTAL TIME IS NOT TRUSTWORTHY
-            // this is last scene in this chapter
-            // check if the scene chapter is over
-  //          ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
-  //          long chapterDuration = currentPackage.getDuration();
-  //          if( (mTotalTime + deltaTime) >= chapterDuration ){
-  //              // YES -> GET "Last scene" or return to menu?
+            //TODO Fix this waste of calls
+            Log.d(TAG, "NO MORE SCENES IN THIS CHAPTER");
+            Log.d(TAG, "Next Chapter: " +mNextChapterInd);
+            if (mNextChapter != null) {
+
+                Log.d(TAG, "Next CHAPTER: " + mNextChapterInd + " Waiting for mplayer to end");
+                // wait for the track in current chap to end and jump to the next chapter
                 if (!ContentAudioPlayer.getInstance().isPlaying()){
-                     this.onChapterEnd();
+
+                    Log.d(TAG, "Jumping to "+mNextChapterInd);
+                    jumpToChapter(mNextChapterInd,0); // changes current Scene and starts playback
                 }
+
+            } else {
+
+                // wait for the track to end and finish the module
+                if (!ContentAudioPlayer.getInstance().isPlaying()){
+                    Log.d(TAG, "Ending the module");
+                    onModuleEnd();
+                }
+
             }
 
+
+        }
         return mCurrentScene;
     }
 
@@ -267,24 +320,29 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
      * @return next Scene, null if last scene
      */
     private Scene getNextScene(){
-        Scene nextScene=null;
         int nextSceneIndex = mCurrentSceneInd+1;
-        ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
-        Chapter currentChapter = currentPackage.getChapter( 0 ); //TODO: GET Current Chapter
-        return currentChapter.getContentSceneAt(nextSceneIndex);
+        return mCurrentChapter.getContentSceneAt(nextSceneIndex);
     }
     /**
      * Returns the previous scene, does not update the current scene accounting.
      *
      * @return previous Scene, null if first scene
      */
+    //TODO make currentPackage and currentPackageInd  member variables, taken only once.
     private Scene getPreviousScene(){
         Scene previousScene=null;
         if( mCurrentSceneInd != 0 ){
             int previousSceneIndex = mCurrentSceneInd-1;
-            ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
-            Chapter firstChapter = currentPackage.getChapter( 0 );
-            previousScene = firstChapter.getContentSceneAt(previousSceneIndex);
+            previousScene = mCurrentChapter.getContentSceneAt(previousSceneIndex);
+
+        } else { //Return the las scene of the previous chapter.
+
+            if(mCurrentChapterInd != 0) {
+                Chapter chapter = mCurrentPackage.getChapter(mCurrentChapterInd-1);
+                jumpToChapter( mCurrentChapterInd-1,chapter.getAllScenes().size()-1);
+
+
+            }
         }
         return previousScene;
     }
@@ -298,8 +356,7 @@ public class ContentActivity extends Activity implements AnimationEngine, SceneO
     }
     // TODO: will we have "END SCENE"
     public Scene getEndScene(){
-        ContentPackage currentPackage = PackagePool.getInstance().getContent( mPackageID );
-        Chapter firstChapter = currentPackage.getChapter( 0 );
+        Chapter firstChapter = mCurrentPackage.getChapter( 0 );
         ArrayList<ContentScene> items = firstChapter.getAllScenes();
         Scene lastScene = items.get( items.size()-1 );
         return lastScene;

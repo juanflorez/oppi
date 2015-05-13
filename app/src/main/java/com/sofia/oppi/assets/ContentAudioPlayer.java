@@ -43,6 +43,46 @@ public class ContentAudioPlayer {
         mPlayer.start();
     }
 
+    /**
+     *
+     * @param audioName full path for the audio file
+     * @param context
+     * @param milliseconds Start point
+     * @return
+     */
+    public boolean prepare (String audioFilePAth, Context context, int milliseconds){
+
+        if(mPlayer != null && mPlayer.isPlaying()){
+            mPlayer.stop();
+            mPlayer.release();
+        }
+
+        if(mPlayer != null){
+            mPlayer.release();
+        }
+
+        mPlayer = new  MediaPlayer();
+
+        try {
+            mPlayer.setDataSource(context, Uri.parse(audioFilePAth));
+            mPlayer.prepare();
+            mPlayer.seekTo(milliseconds);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            // CATASTROPHIC FAIL
+            return false;
+        }
+
+    }
+
+    public  void startPlaying () {
+        if(mPlayer != null && !mPlayer.isPlaying()){
+            mPlayer.start();
+        }
+    }
+
+
     public int getDuration(){
         int duration=0;
         if( mPlayer != null ){
