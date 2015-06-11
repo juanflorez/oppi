@@ -4,11 +4,18 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 
+import com.badlogic.androidgames.framework.Input;
+import com.badlogic.androidgames.framework.impl.AndroidInput;
+import com.badlogic.androidgames.framework.impl.MultiTouchHandler;
+import com.badlogic.androidgames.framework.impl.TouchHandler;
 import com.sofia.oppi.animationengine.AnimationEngine;
 import com.sofia.oppi.animationengine.OPPIGraphics;
 import com.sofia.oppi.assets.BitmapPool;
@@ -28,12 +35,17 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
     private final String TAG = "AnimationSurface";
     private boolean mSceneRunning=false;
 
+    private AndroidInput mAndroidInput;
+    private TouchHandler mTouchHandler;
+
     public AnimationSurface( Context context, AnimationEngine engine, Bitmap framebuffer ) {
         super(context);
         mHolder = getHolder();
         mHolder.addCallback( this );
         mAnimationEngine = engine;
         mFramebuffer = framebuffer;
+        WindowManager manager = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE));
+
     }
 
     public void attachFrameBuffer( Bitmap buffer ){
@@ -52,15 +64,24 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
             Canvas canvas = mHolder.lockCanvas();
 
             synchronized ( mHolder ) {
-                Rect rect=new Rect();
+
+                Rect rect = new Rect();
                 // call graphics to update
-                mAnimationEngine.getCurrentScene().update();
-                // and draw on the framebuffer bitmap
-                mAnimationEngine.getCurrentScene().present();
+                try {
+                    mAnimationEngine.getCurrentScene().update(mAndroidInput.getTouchEvents());
+                    // and draw on the framebuffer bitmap
+                    mAnimationEngine.getCurrentScene().present();
+                }catch (NullPointerException ex){
+                    Log.d(TAG,"--- START EXCEPTION ---");
+                    ex.printStackTrace();
+                    Log.d(TAG,"--- END EXCEPTION ---");
+                }
                 // then finally draw the framebuffer with scaling
-                canvas.getClipBounds( rect );
-                canvas.drawBitmap( mFramebuffer, null, rect, null );
+                canvas.getClipBounds(rect);
+                canvas.drawBitmap(mFramebuffer, null, rect, null);
                 //canvas.drawBitmap( mFramebuffer, 0, 0, null ); // no scaling
+
+
             }
             // finishes the drawing on surface
             mHolder.unlockCanvasAndPost( canvas );
@@ -71,6 +92,12 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
 
     @Override
     public void surfaceCreated( SurfaceHolder holder ) {
+        Log.d(TAG,"Adding INPUT");
+        float scaleX = (float) mFramebuffer.getWidth()/getWidth();
+        float scaleY = (float) mFramebuffer.getHeight()/getHeight();
+
+        mAndroidInput = new AndroidInput(getContext(), this,scaleX,scaleY);
+
     }
 
     @Override
@@ -127,4 +154,7 @@ public class AnimationSurface extends SurfaceView implements SurfaceHolder.Callb
     public void stopScene(){
         mSceneRunning=false;
     }
+
+
+
 }

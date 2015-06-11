@@ -5,81 +5,39 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 /**
- *
+ * Created by juanflorez on 18/05/15.
  */
-public class Chapter extends ModuleElement{
+public abstract class Chapter extends ModuleElement{
 
-    @SerializedName("Scenes")
-    ArrayList<ContentScene> scenes=null;
-
-    @SerializedName("SoundFile")
-    String mAudioName="";
-
-    public void setAudioName( String audioName ){
-        mAudioName=audioName;
+    public enum Status {
+        NOT_READY,
+        READY,
+        PLAYING_CONTENT,
+        SHOWING_ACTION
     }
-    public String getAudioName(){
-        return  root+mAudioName;
-    }
+    protected Status status = Status.NOT_READY;
+    public abstract void setAudioName(String audioName);
 
-    public void add( ContentScene item ) {
-        if( scenes == null ){
-            scenes = new ArrayList<ContentScene>();
-        }
-        scenes.add( item );
-    }
+    public abstract String getAudioName();
 
-    public void remove( ContentScene item ) {
+    public abstract void add( ContentScene item);
 
-    }
-//TODO Exception for out of index
-    public ContentScene getContentSceneAt(int ind) {
-        ContentScene item=null;
-        if( scenes != null && ind < scenes.size() ){
-            item = scenes.get( ind );
-        }
-        return item;
-    }
+    //public abstract void remove(ContentScene item);
 
-    public ArrayList<ContentScene> getAllScenes(){
-        return scenes;
-    }
+    //TODO Exception for out of index
+        public abstract Scene getSceneAt(int ind);
 
-   //_______ Setters and Getters for GSON to work _________
+    public abstract ArrayList<ContentScene> getAllContentScenes();
 
+    public abstract ArrayList<ContentScene> getContentScenes();
 
-    public ArrayList<ContentScene> getScenes() {
-        return scenes;
-    }
+    public abstract void setContentScenes(ArrayList<ContentScene> scenes);
 
-    public void setScenes(ArrayList<ContentScene> scenes) {
-        this.scenes = scenes;
-    }
+    //public abstract Scene getNextScene();
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Chapter{" +
-                ", mAudioName='" + mAudioName + '\'' +
-                '}'+'\n'
-        );
-        for (int i=0; i< scenes.size();i++){
-            builder.append(
-                    "SCENE: " + i + '\n' +
-                            scenes.get(i).toString() +
-                            '\n'
-            );
+    public abstract String toString();
 
-        }
-
-        return builder.toString();
-    }
     @Override
-    public void setRoot(String path)
-    {
-        root = path;
-        for(int i=0; i<scenes.size();i++){
-            scenes.get(i).setRoot(path);
-        }
-    }
+    public abstract void setRoot(String path);
 }

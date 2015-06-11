@@ -11,6 +11,7 @@ public interface Graphics {
     public void clear( int color );
     public void drawBitmap( String bitmapName, int x, int y );
     public void drawBackground( String bitmapName );
+    public void drawBitmap( String bitmapName, Rect rect);
     public int getHeight();
     public int getWidth();
 

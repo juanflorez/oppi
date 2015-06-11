@@ -14,4 +14,5 @@ public abstract class Constants {
 
     public static final String HOME_DIR = "/Sofia/";
     public static final String CONTENT_FILE = "/content.json";
+    public static final boolean RnD_OFFLINE_MODE =  false;
 }

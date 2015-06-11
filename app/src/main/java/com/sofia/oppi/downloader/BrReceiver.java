@@ -131,7 +131,14 @@ public class BrReceiver extends BroadcastReceiver{
         return true;
     }
 
-    private String unZipFile(String path, String zipFile){
+    /**
+     *  give a path and a zip file, and it iwill returned the unziped file
+     *  in the patn
+     * @param path
+     * @param zipFile
+     * @return
+     */
+    public String unZipFile(String path, String zipFile){
         String destination = Environment.getExternalStorageDirectory().getAbsolutePath()+
                 Constants.HOME_DIR;
         // TODO Delete zip file after successful extraction

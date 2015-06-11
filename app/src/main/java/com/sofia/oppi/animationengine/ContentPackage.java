@@ -9,26 +9,32 @@ import java.util.ArrayList;
 import static java.lang.Integer.*;
 
 /**
- * Class that represents the content
- * {
+ {
  "PackageData": {
- "PackageID": 20150321,
- "Name": "Test Lesson V2",
+ "PackageID": 12150321,
+ "Name": "Test V12 new tree Path",
  "PackageVersion": 1,
- "EngineVersion": 1,
+ "EngineVersion": 6,
  "MinimumResolution": "ldpi",
  "MaximumResolution": "xxxhdpi"
  },
-
  "Desktop": {
  "SmallIcon": "icons/small.png",
  "MediumIcon": "icons/medium.png",
  "BigIcon": "icons/big.png",
  "Duration": "00:00:37"
- }
+ },
 
- "chaptersObj" : [
- {"FileName" : "chapter1.json"}
+ "Chapters" : [
+ {"FileName" : "chapters/chapter1.json"},
+ {"FileName" : "chapters/chapter2.json"}
+
+ ],
+
+ "Interactive" : [
+
+ {"FileName" : "interactive/chapter3.json"}
+
  ]
  }
  */
@@ -44,7 +50,13 @@ public class ContentPackage extends ModuleElement{
     ArrayList<ChapterName> chapters = null;
 
 
-    ArrayList<Chapter> chaptersObj;
+    @SerializedName("Interactive")
+    ArrayList<ChapterName> interactiveChapterNames = null;
+
+
+
+    ArrayList<ContentChapter> chaptersObj;
+    ArrayList<InteractiveChapter> actionChaptersObj;
 
 
 
@@ -63,7 +75,9 @@ public class ContentPackage extends ModuleElement{
 
     /*Empty holder*/
     public ContentPackage () {
-        chaptersObj = new ArrayList<Chapter>();
+
+        chaptersObj = new ArrayList<ContentChapter>();
+        actionChaptersObj = new ArrayList<InteractiveChapter>();
     }
 //TODO the desktop component should also be added here
     public ContentPackage(String name, Long id, String packVersion, String engVersion, String minRes, String maxRes ){
@@ -73,7 +87,7 @@ public class ContentPackage extends ModuleElement{
         PackageVersion =packVersion;
         MinResolution =minRes;
         MaxResolution =maxRes;
-        chaptersObj = new ArrayList<Chapter>();
+        chaptersObj = new ArrayList<ContentChapter>();
     }
 
 
@@ -133,17 +147,27 @@ public class ContentPackage extends ModuleElement{
        return parseInt(times[2]) + parseInt(times[1])*60 + parseInt(times[0])*3600;
     }
 
-    public void addChapter( Chapter chapter ){
-        chaptersObj.add(chapter);
+    public void addChapter( ContentChapter contentChapter){
+        chaptersObj.add(contentChapter);
     }
 
+
+    // TODO MUST REFACTOR ONCE IT IS TESTED THAT INTERACTIVE SCENES WORK
     public Chapter getChapter( int ind ){
-        Chapter chapter=null;
+        ContentChapter contentChapter =null;
         if( chaptersObj != null && ind < chaptersObj.size() && ind >= 0){
-            chapter = chaptersObj.get( ind );
+            contentChapter = chaptersObj.get( ind );
+            return contentChapter;
         }
-        return chapter;
+        if (actionChaptersObj != null && ind+chaptersObj.size() < actionChaptersObj.size())
+        {
+            InteractiveChapter interactiveChapter = actionChaptersObj.get(0);
+            return interactiveChapter;
+        }
+        return contentChapter;
     }
+
+
 
     public void setDesktop(Desktop desktop){
         this.desktop = desktop;
@@ -184,6 +208,13 @@ public class ContentPackage extends ModuleElement{
             builder.append(chaptersObj.get(i).toString());
             builder.append("'\n'");
         }
+        builder.append(" Action Chapters:" +'\n');
+
+        for (int j=0; j<actionChaptersObj.size(); j++){
+            builder.append(actionChaptersObj.get(j).toString());
+            builder.append("\n");
+
+        }
 
         return builder.toString();
     }
@@ -198,10 +229,10 @@ public class ContentPackage extends ModuleElement{
         ArrayList<String> paths = new ArrayList<String>();
         // get the backgrounds and the images of each frame in each scene
         for(int i=0; i<chaptersObj.size();i++){
-            Chapter tmpChapter = chaptersObj.get(i);
+            ContentChapter tmpContentChapter = chaptersObj.get(i);
 
-            for(int j=0; j<tmpChapter.getAllScenes().size(); j++){
-                ContentScene tmpScene = tmpChapter.getContentSceneAt(j);
+            for(int j=0; j< tmpContentChapter.getAllContentScenes().size(); j++){
+                ContentScene tmpScene = (ContentScene)tmpContentChapter.getSceneAt(j);
                 paths.add(tmpScene.getBitmapName());
 
                 for(int k=0; k<tmpScene.getFrames().size();k++){
@@ -223,10 +254,21 @@ public class ContentPackage extends ModuleElement{
                 }
             }
 
+            for(int j=0; j< tmpContentChapter.getActionScenes().size(); j++){
+                ActionScene tmpScene = (ActionScene)tmpContentChapter.getActionSceneAt(j);
+                paths.add(tmpScene.getBitmapName());
+                paths.add(tmpScene.getCorrectImage());
+                paths.add(tmpScene.getIncorrectImage());
+                for(ActionImage image : tmpScene.actionImages){
+                    paths.add(image.getStartImage());
+                }
+            }
+
         }
 
         return  paths;
     }
+
 
     static class Desktop {
         private String SmallIcon="";

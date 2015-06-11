@@ -1,0 +1,21 @@
+
+[
+   {
+      "name"     : "frame_1",
+      "duration" : "00:00:05",
+      "images": [
+        {"file":"resources/one.png", "pos_x" : "572", "pos_y" : "225"}
+       ]
+   },
+
+   {
+
+      "name"     : "frame_2",
+      "duration" : "00:00:08",
+      "images": [
+        {"file":"resources/two.png", "pos_x" : "572", "pos_y" : "125"}
+       ]
+   }
+]
+
+

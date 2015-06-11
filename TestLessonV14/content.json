@@ -1,9 +1,9 @@
 {
     "PackageData": {
-        "PackageID": 22150321,
-        "Name": "Test Lesson V2",
+        "PackageID": 16180321,
+        "Name": "V16 RnD One chap with Touch Actions",
         "PackageVersion": 1,
-        "EngineVersion": 1,
+        "EngineVersion": 6,
         "MinimumResolution": "ldpi",
         "MaximumResolution": "xxxhdpi"
     },
@@ -12,5 +12,10 @@
         "MediumIcon": "icons/medium.png",
         "BigIcon": "icons/big.png",
         "Duration": "00:00:37"
-    }
+    },
+
+     "Chapters" : [
+           {"FileName" : "interactive/chapter3.json"}
+
+     ]
 }

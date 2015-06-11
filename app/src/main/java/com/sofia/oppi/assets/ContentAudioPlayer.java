@@ -4,16 +4,18 @@ package com.sofia.oppi.assets;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
-
+import android.util.Log;
 
 
 import java.io.IOException;
 
 /**
  */
-public class ContentAudioPlayer {
+public class ContentAudioPlayer implements MediaPlayer.OnCompletionListener{
+    private static final String TAG = "Cont_Audio_Pl";
     private static ContentAudioPlayer instance;
     private MediaPlayer mPlayer=null;
+    private boolean mCompleted = false;
 
     private ContentAudioPlayer(){
     }
@@ -39,13 +41,17 @@ public class ContentAudioPlayer {
     }
 
     public void playAudio( String audioName, Context context ){
+        if(mPlayer!=null && mPlayer.isPlaying()){
+            mPlayer.release();
+        }
         mPlayer = MediaPlayer.create(context, Uri.parse(audioName) );
+        mPlayer.setOnCompletionListener(this);
         mPlayer.start();
     }
 
     /**
      *
-     * @param audioName full path for the audio file
+     * @param audioFilePAth full path for the audio file
      * @param context
      * @param milliseconds Start point
      * @return
@@ -99,6 +105,10 @@ public class ContentAudioPlayer {
         return position;
     }
 
+    public boolean playbackCompleted(){
+        return mCompleted;
+    }
+
     public void pause(){
         if( mPlayer != null && mPlayer.isPlaying() ){
             mPlayer.pause();
@@ -134,5 +144,11 @@ public class ContentAudioPlayer {
             mPlayer.release();
             mPlayer = null;
         }
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mCompleted = true;
+        Log.d(TAG, "Playback Completed");
     }
 }

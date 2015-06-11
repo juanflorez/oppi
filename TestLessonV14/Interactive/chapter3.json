@@ -1,0 +1,37 @@
+{
+ "SoundFile":"resources/instructions.mp3",
+
+ "Scenes":[
+
+     {"SceneFile":"interactive/scenes/instructions.json",
+      "StartTime":"00:00:00",
+      "background":"resources/background1.jpg",
+      "screenWidth" : "1280",
+      "screenHight" : "800" }
+ ],
+
+ "ActionScenes":[
+
+
+    { "background":"resources/background2.jpg",
+      "endImage"  :"resources/background3.jpg",
+      "correct_image" : "resources/zero.png",
+      "incorrect_image" : "resources/x.png",
+      "interactive":true,
+      "templateId" : 1,
+      "screenWidth" : "1280",
+      "screenHight" : "800" ,
+      "actionImages":[
+
+        {"id": "three", "start_image" : "resources/three.png", "correct" : false},
+        {"id": "two", "start_image" : "resources/two.png", "correct" : true},
+        {"id": "nine", "start_image" : "resources/nine.png", "correct" : false},
+        {"id": "four", "start_image" : "resources/four.png", "correct" : true},
+        {"id": "five", "start_image" : "resources/five.png", "correct" : false},
+        {"id": "six", "start_image" : "resources/six.png", "correct" : true},
+        {"id": "seven", "start_image" : "resources/seven.png", "correct" : false}
+
+      ]
+    }
+ ]
+}

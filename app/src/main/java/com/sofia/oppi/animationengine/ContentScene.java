@@ -1,44 +1,25 @@
 package com.sofia.oppi.animationengine;
 
-import android.graphics.Rect;
 import android.util.Log;
 
-import com.google.gson.annotations.SerializedName;
+import com.badlogic.androidgames.framework.Input;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
 /**
  * Created by riikka on 02/04/15.
- * It maps to scene descriptor in Chapter.json
+ * It maps to scene descriptor in ContentChapter.json
  */
 public class ContentScene extends Scene {
     private static final String TAG = "CONT_SCENE";
-    @SerializedName("SceneFile")
-    private String mJsonFile="";
 
-    @SerializedName("background")
-    private String mBackground="";
-
-    @SerializedName("screenHight")
-    private int mScreenHeight;
-
-    @SerializedName("screenWidth")
-    private int mScreenWidth;
-
-    @SerializedName("StartTime")
-    private String mStartTimeString;
-
-    private Rect mDestRect;
-
-    private ArrayList<Frame> mFrames=null;
-    private int mCurrentFrame=0;
-    private int mPresentedFrame=1;
-    private int mSceneAudioMarkTime=0;
-    private AnimationEngine mAnimationEngine=null;
-    private float mStartTime=0.0f;
-
+    protected int mSceneAudioMarkTime=0;
+    protected int mCurrentFrame=0;
+    protected ArrayList<Frame> mFrames=null;
+    protected int mPresentedFrame=1;
 
 
     public String getJsonFile() {
@@ -102,6 +83,11 @@ public class ContentScene extends Scene {
             mStartTime =System.nanoTime();
         }
 
+    }
+
+    @Override
+    public void update(List<Input.TouchEvent> events){
+        update();
     }
 
     @Override

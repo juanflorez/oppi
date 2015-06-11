@@ -3,6 +3,8 @@ package com.sofia.oppi.animationengine;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
@@ -16,7 +18,7 @@ public class OPPIGraphics implements Graphics {
     private static final String TAG = "OPPIGraphics";
     // for drawing on the mutable bitmap (mFrameBuffer)
     Canvas mCanvas=null;
-    // Mutable bitmap, which is updated on the basis of current Chapter/Scene. Actual drawing of the bitmap
+    // Mutable bitmap, which is updated on the basis of current ContentChapter/Scene. Actual drawing of the bitmap
     // is done by AnimationSurface, which holds the reference of this bitmap
     Bitmap mFrameBuffer=null;
     BitmapPool  mBitmapPool=null;
@@ -73,6 +75,21 @@ public class OPPIGraphics implements Graphics {
             Log.e(TAG, "Bitmap: " + bitmapName + "Not found");
         }
 
+    }
+    @Override
+    public void drawBitmap( String bitmapName, Rect rect){
+
+        Bitmap bitmap = mBitmapPool.getBitmap(bitmapName);
+        Paint paint = new Paint();
+
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.RED);
+        if (bitmap!=null) {
+            mCanvas.drawRect(rect,paint);
+            mCanvas.drawBitmap(bitmap, null, rect, null);
+        } else {
+            Log.e(TAG, "Bitmap: "+ bitmapName + "not found in pool");
+        }
     }
 
     @Override
